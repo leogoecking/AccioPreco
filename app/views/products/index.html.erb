@@ -1,0 +1,52 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-black text-slate-900 tracking-tight">Produtos no Comércio Local</h1>
+    <p class="text-sm text-slate-500 mt-1">Consulte preços e entre em contato direto com lojas de Teixeira de Freitas</p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% @products.each do |product| %>
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-md transition flex flex-col justify-between">
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
+              <%= product.category.name %>
+            </span>
+            <% if product.on_sale? %>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200">
+                -<%= product.discount_percentage %>% OFF
+              </span>
+            <% end %>
+          </div>
+
+          <h3 class="font-bold text-slate-900 text-base mb-1">
+            <%= link_to product.name, product_path(product), class: "hover:text-indigo-600 transition" %>
+          </h3>
+          <p class="text-xs text-slate-500 mb-3">
+            Loja: <%= link_to product.business.name, business_path(product.business), class: "hover:underline font-medium text-slate-700" %>
+          </p>
+          <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+            <%= product.description %>
+          </p>
+        </div>
+
+        <div class="px-5 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+          <div>
+            <% if product.on_sale? %>
+              <p class="text-[11px] text-slate-400 line-through">R$ <%= '%.2f' % product.price %></p>
+            <% end %>
+            <p class="text-lg font-black text-slate-950">R$ <%= '%.2f' % product.current_price %></p>
+          </div>
+
+          <% if product.business.whatsapp.present? %>
+            <%= link_to product.business.whatsapp_url(text: "Olá! Vi #{product.name} no Accio Preço e tenho interesse."), target: "_blank", class: "px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs" do %>
+              WhatsApp
+            <% end %>
+          <% else %>
+            <%= link_to "Detalhes", product_path(product), class: "text-xs font-bold text-indigo-600 hover:underline" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

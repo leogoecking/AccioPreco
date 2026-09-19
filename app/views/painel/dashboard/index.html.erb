@@ -1,0 +1,132 @@
+<div class="space-y-8">
+  <!-- Top Greeting & Actions -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+        Olá, <%= current_user.name %>!
+      </h1>
+      <p class="text-sm text-slate-500 mt-0.5">
+        <% if @current_business %>
+          Gerenciando o catálogo de <strong class="text-slate-800"><%= @current_business.name %></strong>
+        <% else %>
+          Configure sua empresa para começar a cadastrar produtos e serviços.
+        <% end %>
+      </p>
+    </div>
+
+    <% if @current_business %>
+      <div class="flex items-center gap-2">
+        <%= link_to new_painel_product_path, class: "inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm transition" do %>
+          <span>+ Novo Produto</span>
+        <% end %>
+        <%= link_to new_painel_service_path, class: "inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-sm transition" do %>
+          <span>+ Novo Serviço</span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @current_business %>
+    <!-- Metrics Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+        <div class="flex items-center justify-between">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Produtos Ativos</p>
+          <span class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-sm">📦</span>
+        </div>
+        <p class="text-3xl font-black text-slate-900 mt-2"><%= @products_count %></p>
+        <p class="text-xs text-slate-500 mt-1"><%= link_to "Gerenciar produtos →", painel_products_path, class: "text-indigo-600 hover:underline font-semibold" %></p>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+        <div class="flex items-center justify-between">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Serviços Ativos</p>
+          <span class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">🛠️</span>
+        </div>
+        <p class="text-3xl font-black text-slate-900 mt-2"><%= @services_count %></p>
+        <p class="text-xs text-slate-500 mt-1"><%= link_to "Gerenciar serviços →", painel_services_path, class: "text-indigo-600 hover:underline font-semibold" %></p>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+        <div class="flex items-center justify-between">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Contatos / Leads</p>
+          <span class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">💬</span>
+        </div>
+        <p class="text-3xl font-black text-slate-900 mt-2"><%= @leads_count %></p>
+        <p class="text-xs text-slate-500 mt-1"><%= link_to "Ver todos os leads →", painel_leads_path, class: "text-indigo-600 hover:underline font-semibold" %></p>
+      </div>
+    </div>
+
+    <!-- Recent Leads & Products Tables -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Recent Leads -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-slate-900">Últimos Contatos Recebidos</h2>
+          <%= link_to "Ver todos", painel_leads_path, class: "text-xs font-bold text-indigo-600 hover:underline" %>
+        </div>
+
+        <% if @recent_leads.any? %>
+          <div class="divide-y divide-slate-100">
+            <% @recent_leads.each do |lead| %>
+              <div class="py-3 flex items-center justify-between">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="inline-block w-2 h-2 rounded-full <%= lead.lead_type == 'whatsapp_click' ? 'bg-emerald-500' : 'bg-indigo-500' %>"></span>
+                    <p class="text-sm font-semibold text-slate-800">
+                      <%= lead.lead_type == 'whatsapp_click' ? 'Clique no WhatsApp' : 'Solicitação de Orçamento' %>
+                    </p>
+                  </div>
+                  <p class="text-xs text-slate-500 mt-0.5">Item: <%= lead.target_item_name %></p>
+                </div>
+                <span class="text-[11px] text-slate-400">
+                  <%= lead.created_at.strftime("%d/%m/%Y %H:%M") %>
+                </span>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-xs text-slate-400 py-6 text-center">Nenhum contato registrado ainda.</p>
+        <% end %>
+      </div>
+
+      <!-- Quick Summary: Recent Products -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-slate-900">Produtos Recentes</h2>
+          <%= link_to "Ver todos", painel_products_path, class: "text-xs font-bold text-indigo-600 hover:underline" %>
+        </div>
+
+        <% if @recent_products.any? %>
+          <div class="divide-y divide-slate-100">
+            <% @recent_products.each do |product| %>
+              <div class="py-3 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold text-slate-800"><%= product.name %></p>
+                  <p class="text-xs text-slate-500">R$ <%= '%.2f' % product.current_price %></p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <%= link_to "Editar", edit_painel_product_path(product), class: "text-xs font-semibold text-indigo-600 hover:underline" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-xs text-slate-400 py-6 text-center">Nenhum produto cadastrado.</p>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <!-- Empty state for merchant without business -->
+    <div class="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 text-center max-w-xl mx-auto">
+      <div class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-3xl mx-auto mb-4">
+        🏢
+      </div>
+      <h2 class="text-2xl font-black text-slate-900">Cadastre sua Empresa</h2>
+      <p class="text-sm text-slate-500 mt-2 mb-6">
+        Para começar a divulgar seus produtos e serviços no Accio Preço, adicione os dados básicos do seu negócio.
+      </p>
+      <%= link_to "Cadastrar Empresa Agora", new_painel_business_path, class: "inline-flex px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md transition" %>
+    </div>
+  <% end %>
+</div>

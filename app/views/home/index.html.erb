@@ -1,0 +1,250 @@
+<!-- Hero Section -->
+<section class="relative overflow-hidden bg-gradient-to-b from-indigo-50/60 via-white to-slate-50 py-12 sm:py-20 border-b border-slate-200/60">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 mb-6">
+      <span class="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"></span>
+      Comércio & Serviços em Teixeira de Freitas - BA
+    </div>
+
+    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-950">
+      Accio<span class="text-indigo-600">Preço</span>
+    </h1>
+    <p class="mt-4 text-lg sm:text-xl text-slate-600 font-medium max-w-2xl mx-auto">
+      Encontre o que precisa perto de você.
+    </p>
+
+    <!-- Search Form -->
+    <div class="mt-8 max-w-2xl mx-auto">
+      <%= form_with url: search_path, method: :get, class: "relative flex flex-col sm:flex-row items-stretch gap-2 bg-white p-2 rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200" do |f| %>
+        <div class="relative flex-grow flex items-center">
+          <svg class="w-5 h-5 text-slate-400 absolute left-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <%= f.text_field :q, placeholder: "O que você está procurando? (ex: copo térmico, ar-condicionado, eletricista)", class: "w-full pl-11 pr-4 py-3 sm:py-3.5 text-slate-800 placeholder-slate-400 text-sm sm:text-base border-0 focus:ring-0 focus:outline-none rounded-xl" %>
+        </div>
+        <%= f.submit "Buscar", class: "w-full sm:w-auto px-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm sm:text-base rounded-xl transition shadow-md shadow-indigo-200 cursor-pointer" %>
+      <% end %>
+    </div>
+
+    <!-- Quick Search Suggestions -->
+    <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-500">
+      <span class="font-medium text-slate-400">Sugestões:</span>
+      <%= link_to "copo térmico", search_path(q: "copo térmico"), class: "px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 transition" %>
+      <%= link_to "carregador USB-C", search_path(q: "carregador USB-C"), class: "px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 transition" %>
+      <%= link_to "ar-condicionado", search_path(q: "ar-condicionado"), class: "px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 transition" %>
+      <%= link_to "eletricista", search_path(q: "eletricista"), class: "px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 transition" %>
+      <%= link_to "ração", search_path(q: "ração"), class: "px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 transition" %>
+    </div>
+  </div>
+</section>
+
+<!-- Main Navigation Tabs / Categories -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex items-center justify-center gap-3 sm:gap-4 overflow-x-auto pb-2">
+    <%= link_to products_path, class: "flex items-center gap-2 px-5 py-3 rounded-2xl bg-white border border-slate-200 hover:border-indigo-500 hover:shadow-md text-slate-800 font-bold text-sm transition shrink-0" do %>
+      <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">📦</div>
+      <span>Produtos</span>
+    <% end %>
+
+    <%= link_to services_path, class: "flex items-center gap-2 px-5 py-3 rounded-2xl bg-white border border-slate-200 hover:border-indigo-500 hover:shadow-md text-slate-800 font-bold text-sm transition shrink-0" do %>
+      <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">🛠️</div>
+      <span>Serviços</span>
+    <% end %>
+
+    <%= link_to businesses_path, class: "flex items-center gap-2 px-5 py-3 rounded-2xl bg-white border border-slate-200 hover:border-indigo-500 hover:shadow-md text-slate-800 font-bold text-sm transition shrink-0" do %>
+      <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">🏢</div>
+      <span>Empresas</span>
+    <% end %>
+  </div>
+
+  <!-- Dynamic Category Pills -->
+  <% if @categories.any? %>
+    <div class="mt-6 flex flex-wrap items-center justify-center gap-2">
+      <% @categories.each do |category| %>
+        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 shadow-2xs">
+          <%= category.name %>
+        </span>
+      <% end %>
+    </div>
+  <% end %>
+</section>
+
+<!-- Featured Products Section -->
+<% if @featured_products.any? %>
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h2 class="text-2xl font-black text-slate-900 tracking-tight">Produtos em Destaque</h2>
+        <p class="text-sm text-slate-500">Disponíveis no comércio de Teixeira de Freitas</p>
+      </div>
+      <%= link_to "Ver todos →", products_path, class: "text-sm font-bold text-indigo-600 hover:text-indigo-700" %>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @featured_products.each do |product| %>
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-md hover:border-indigo-200 transition flex flex-col justify-between">
+          <div class="p-5">
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
+                <%= product.category.name %>
+              </span>
+              <% if product.on_sale? %>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200">
+                  -<%= product.discount_percentage %>% OFF
+                </span>
+              <% end %>
+            </div>
+
+            <h3 class="font-bold text-slate-900 text-base line-clamp-1 mb-1">
+              <%= link_to product.name, product_path(product), class: "hover:text-indigo-600 transition" %>
+            </h3>
+            <p class="text-xs text-slate-500 mb-4 flex items-center gap-1">
+              <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/>
+              </svg>
+              <%= link_to product.business.name, business_path(product.business), class: "hover:underline" %>
+            </p>
+            <p class="text-xs text-slate-600 line-clamp-2 mb-4 leading-relaxed">
+              <%= product.description %>
+            </p>
+          </div>
+
+          <div class="px-5 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+            <div>
+              <% if product.on_sale? %>
+                <p class="text-[11px] text-slate-400 line-through">R$ <%= '%.2f' % product.price %></p>
+              <% end %>
+              <p class="text-lg font-black text-slate-950">
+                R$ <%= '%.2f' % product.current_price %>
+              </p>
+            </div>
+
+            <% if product.business.whatsapp.present? %>
+              <%= link_to product.business.whatsapp_url(text: "Olá! Vi o produto '#{product.name}' no Accio Preço e gostaria de mais informações."), target: "_blank", rel: "noopener", class: "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition" do %>
+                <span>WhatsApp</span>
+              <% end %>
+            <% else %>
+              <%= link_to "Ver detalhes", product_path(product), class: "text-xs font-bold text-indigo-600 hover:underline" %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+<% end %>
+
+<!-- Featured Services Section -->
+<% if @featured_services.any? %>
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h2 class="text-2xl font-black text-slate-900 tracking-tight">Serviços e Especialistas</h2>
+        <p class="text-sm text-slate-500">Profissionais qualificados em Teixeira de Freitas</p>
+      </div>
+      <%= link_to "Ver todos →", services_path, class: "text-sm font-bold text-indigo-600 hover:text-indigo-700" %>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @featured_services.each do |service| %>
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:shadow-md hover:border-indigo-200 transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700">
+                <%= service.category.name %>
+              </span>
+              <% if service.home_service? %>
+                <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                  🏠 A Domicílio
+                </span>
+              <% end %>
+            </div>
+
+            <h3 class="font-bold text-slate-900 text-base line-clamp-1 mb-1">
+              <%= link_to service.name, service_path(service), class: "hover:text-indigo-600 transition" %>
+            </h3>
+            <p class="text-xs text-slate-500 mb-3">
+              Por <%= link_to service.business.name, business_path(service.business), class: "font-semibold text-slate-700 hover:underline" %>
+            </p>
+            <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-4">
+              <%= service.description %>
+            </p>
+          </div>
+
+          <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-sm font-bold text-indigo-700">
+              <%= service.formatted_price %>
+            </span>
+
+            <% if service.business.whatsapp.present? %>
+              <%= link_to service.business.whatsapp_url(text: "Olá! Vi o serviço '#{service.name}' no Accio Preço e gostaria de solicitar um orçamento."), target: "_blank", rel: "noopener", class: "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition" do %>
+                <span>Orçamento</span>
+              <% end %>
+            <% else %>
+              <%= link_to "Detalhes", service_path(service), class: "text-xs font-bold text-indigo-600 hover:underline" %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+<% end %>
+
+<!-- Local Businesses Section -->
+<% if @businesses.any? %>
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h2 class="text-2xl font-black text-slate-900 tracking-tight">Empresas e Profissionais Locais</h2>
+        <p class="text-sm text-slate-500">Conecte-se com quem faz a economia de Teixeira acontecer</p>
+      </div>
+      <%= link_to "Ver todas →", businesses_path, class: "text-sm font-bold text-indigo-600 hover:text-indigo-700" %>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <% @businesses.each do |business| %>
+        <%= link_to business_path(business), class: "bg-white p-4 rounded-2xl border border-slate-200 hover:border-indigo-400 hover:shadow-md transition flex flex-col justify-between group" do %>
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="w-8 h-8 rounded-xl bg-slate-100 group-hover:bg-indigo-50 text-slate-700 group-hover:text-indigo-600 flex items-center justify-center font-bold text-xs transition">
+                <%= business.name[0..1].upcase %>
+              </span>
+              <% if business.verified? %>
+                <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                  Verificado
+                </span>
+              <% end %>
+            </div>
+
+            <h3 class="font-bold text-slate-900 text-sm group-hover:text-indigo-600 transition truncate">
+              <%= business.name %>
+            </h3>
+            <p class="text-xs text-slate-500 mt-1 line-clamp-2">
+              <%= business.description %>
+            </p>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+            <span><%= business.neighborhood.presence || business.city %></span>
+            <span class="font-semibold text-indigo-600 group-hover:translate-x-0.5 transition">Ver perfil →</span>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+<% end %>
+
+<!-- Merchant Call to Action -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+  <div class="bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 rounded-3xl p-8 sm:p-12 text-white shadow-xl">
+    <div class="max-w-2xl">
+      <span class="text-xs font-bold uppercase tracking-wider text-indigo-300">Para comerciantes e autônomos</span>
+      <h2 class="text-3xl sm:text-4xl font-black tracking-tight mt-2 mb-4">
+        Sua empresa já está no Accio Preço?
+      </h2>
+      <p class="text-indigo-200 text-sm sm:text-base leading-relaxed mb-6">
+        Cadastre seus produtos e serviços e receba contatos diretos no seu WhatsApp de quem procura exatamente o que você oferece em Teixeira de Freitas.
+      </p>
+      <%= link_to "Cadastrar minha empresa", login_path, class: "inline-flex items-center px-6 py-3.5 rounded-xl bg-white hover:bg-slate-100 text-indigo-950 font-extrabold text-sm sm:text-base shadow-lg transition" %>
+    </div>
+  </div>
+</section>

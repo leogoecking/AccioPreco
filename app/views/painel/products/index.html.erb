@@ -1,0 +1,75 @@
+<div class="space-y-6">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-black text-slate-900">Catálogo de Produtos</h1>
+      <p class="text-xs text-slate-500 mt-0.5">Gerencie os produtos disponíveis em seu estabelecimento</p>
+    </div>
+
+    <%= link_to new_painel_product_path, class: "inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm transition" do %>
+      <span>+ Adicionar Produto</span>
+    <% end %>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+    <% if @products.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <th class="p-4">Produto</th>
+              <th class="p-4">Categoria</th>
+              <th class="p-4">Preço</th>
+              <th class="p-4">Status</th>
+              <th class="p-4 text-right">Ações</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-sm">
+            <% @products.each do |product| %>
+              <tr class="hover:bg-slate-50/80 transition">
+                <td class="p-4">
+                  <p class="font-bold text-slate-900"><%= product.name %></p>
+                  <p class="text-xs text-slate-400">/produtos/<%= product.slug %></p>
+                </td>
+                <td class="p-4">
+                  <span class="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium">
+                    <%= product.category.name %>
+                  </span>
+                </td>
+                <td class="p-4">
+                  <p class="font-bold text-slate-900">R$ <%= '%.2f' % product.current_price %></p>
+                  <% if product.on_sale? %>
+                    <span class="text-[10px] text-rose-600 font-semibold">Promoção</span>
+                  <% end %>
+                </td>
+                <td class="p-4">
+                  <% if product.available? %>
+                    <span class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Ativo
+                    </span>
+                  <% else %>
+                    <span class="inline-flex items-center gap-1 text-xs font-semibold text-slate-400">
+                      <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span> Indisponível
+                    </span>
+                  <% end %>
+                </td>
+                <td class="p-4 text-right">
+                  <div class="inline-flex items-center gap-2">
+                    <%= link_to "Ver", product_path(product), target: "_blank", class: "text-xs font-semibold text-slate-600 hover:text-indigo-600" %>
+                    <%= link_to "Editar", edit_painel_product_path(product), class: "text-xs font-semibold text-indigo-600 hover:underline" %>
+                    <%= button_to "Excluir", painel_product_path(product), method: :delete, data: { turbo_confirm: "Tem certeza que deseja excluir este produto?" }, class: "text-xs font-semibold text-rose-600 hover:underline cursor-pointer" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="p-10 text-center">
+        <p class="text-sm font-semibold text-slate-700">Nenhum produto cadastrado ainda.</p>
+        <p class="text-xs text-slate-400 mt-1 mb-4">Adicione seus produtos para os clientes encontrarem na busca.</p>
+        <%= link_to "Cadastrar Primeiro Produto", new_painel_product_path, class: "px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold" %>
+      </div>
+    <% end %>
+  </div>
+</div>

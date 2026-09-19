@@ -1,0 +1,87 @@
+<% content_for :title, "#{@product.name} em Teixeira de Freitas | Accio Preço" %>
+<% content_for :meta_description, "#{@product.name} na loja #{@business.name} em Teixeira de Freitas - BA. Preço: R$ #{'%.2f' % @product.current_price}. Chame direto no WhatsApp." %>
+
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-6">
+    <%= link_to "← Voltar aos produtos", products_path, class: "text-sm text-indigo-600 font-semibold hover:underline" %>
+  </div>
+
+  <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs p-6 sm:p-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Images / Placeholder -->
+      <div class="bg-slate-50 rounded-2xl border border-slate-200 aspect-square flex items-center justify-center p-8 text-center">
+        <% if @product.images.attached? %>
+          <%= image_tag @product.images.first, class: "max-h-full object-contain rounded-xl", alt: @product.name %>
+        <% else %>
+          <div class="text-slate-400">
+            <svg class="w-20 h-20 mx-auto stroke-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <p class="text-xs mt-2 font-medium">Foto do produto disponível na loja</p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Details -->
+      <div class="flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-slate-100 text-slate-700">
+              <%= @product.category.name %>
+            </span>
+            <% if @product.on_sale? %>
+              <span class="text-xs font-bold px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200">
+                <%= @product.discount_percentage %>% OFF
+              </span>
+            <% end %>
+          </div>
+
+          <h1 class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
+            <%= @product.name %>
+          </h1>
+
+          <div class="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+            <% if @product.on_sale? %>
+              <p class="text-xs text-slate-400 line-through">De R$ <%= '%.2f' % @product.price %></p>
+            <% end %>
+            <div class="text-3xl font-black text-slate-950">
+              R$ <%= '%.2f' % @product.current_price %>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">Preço informado pelo comerciante local</p>
+          </div>
+
+          <div class="mt-6 space-y-2">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Descrição</h3>
+            <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+              <%= @product.description %>
+            </p>
+          </div>
+
+          <!-- Business Card snippet -->
+          <div class="mt-6 p-4 rounded-2xl bg-indigo-50/50 border border-indigo-100">
+            <h4 class="text-xs font-bold text-indigo-900 uppercase">Vendido por</h4>
+            <div class="flex items-center justify-between mt-1">
+              <div>
+                <%= link_to @business.name, business_path(@business), class: "font-bold text-slate-900 hover:text-indigo-600" %>
+                <p class="text-xs text-slate-500"><%= @business.full_address %></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Big WhatsApp CTA (Mobile-First) -->
+        <div class="mt-8 pt-6 border-t border-slate-100">
+          <% if @business.whatsapp.present? %>
+            <%= link_to @business.whatsapp_url(text: "Olá! Vi o produto '#{@product.name}' (R$ #{'%.2f' % @product.current_price}) no Accio Preço e gostaria de saber se está disponível!"), target: "_blank", rel: "noopener", class: "w-full py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-base flex items-center justify-center gap-3 shadow-lg shadow-emerald-200/60 transition" do %>
+              <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.585 1.961.879 2.796.88h.005c3.181 0 5.767-2.586 5.768-5.766 0-3.18-2.586-5.767-5.773-5.767zm3.376 8.232c-.144.405-.837.775-1.17.824-.312.045-.718.067-2.146-.525-1.826-.757-3.003-2.617-3.094-2.738-.091-.122-.74-1.026-.74-1.956 0-.931.488-1.389.66-1.58.173-.191.376-.239.502-.239.126 0 .252.001.362.007.116.006.27-.044.422.324.156.377.534 1.306.58 1.401.047.095.078.207.016.332-.063.125-.094.203-.187.312-.093.11-.197.245-.281.33-.094.094-.192.197-.082.386.11.19.489.807 1.05 1.306.722.643 1.331.842 1.52.937.19.094.3.079.412-.047.112-.126.48-.56.608-.752.128-.192.257-.16.432-.095.176.064 1.117.527 1.31.624.192.096.321.144.368.224.047.079.047.46-.097.865z"/>
+              </svg>
+              <span>Chamar no WhatsApp</span>
+            <% end %>
+            <p class="text-center text-xs text-slate-400 mt-2">Sem intermediários · Contato direto com o comerciante</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

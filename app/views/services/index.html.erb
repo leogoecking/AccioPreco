@@ -1,0 +1,49 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-black text-slate-900 tracking-tight">Serviços e Profissionais Locais</h1>
+    <p class="text-sm text-slate-500 mt-1">Especialistas prontos para atender você em Teixeira de Freitas e região</p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% @services.each do |service| %>
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700">
+              <%= service.category.name %>
+            </span>
+            <% if service.home_service? %>
+              <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                🏠 A Domicílio
+              </span>
+            <% end %>
+          </div>
+
+          <h3 class="font-bold text-slate-900 text-lg mb-1">
+            <%= link_to service.name, service_path(service), class: "hover:text-indigo-600 transition" %>
+          </h3>
+          <p class="text-xs text-slate-500 mb-3">
+            Prestador: <%= link_to service.business.name, business_path(service.business), class: "font-semibold text-slate-700 hover:underline" %>
+          </p>
+          <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+            <%= service.description %>
+          </p>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-between mt-4">
+          <span class="text-sm font-bold text-indigo-700">
+            <%= service.formatted_price %>
+          </span>
+
+          <% if service.business.whatsapp.present? %>
+            <%= link_to service.business.whatsapp_url(text: "Olá! Vi #{service.name} no Accio Preço e gostaria de solicitar um orçamento."), target: "_blank", class: "px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs" do %>
+              Orçamento
+            <% end %>
+          <% else %>
+            <%= link_to "Detalhes", service_path(service), class: "text-xs font-bold text-indigo-600 hover:underline" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+<div class="space-y-6">
+  <div>
+    <h1 class="text-2xl font-black text-slate-900">Contatos e Leads Recebidos</h1>
+    <p class="text-xs text-slate-500 mt-0.5">Histórico de intenções comerciais registradas pelos clientes</p>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+    <% if @leads.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <th class="p-4">Tipo de Ação</th>
+              <th class="p-4">Item de Interesse</th>
+              <th class="p-4">Nome do Interessado</th>
+              <th class="p-4">Telefone</th>
+              <th class="p-4">Data e Hora</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-sm">
+            <% @leads.each do |lead| %>
+              <tr class="hover:bg-slate-50/80 transition">
+                <td class="p-4">
+                  <% if lead.lead_type == "whatsapp_click" %>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Clique no WhatsApp
+                    </span>
+                  <% elsif lead.lead_type == "quote_request" %>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Orçamento Solicitado
+                    </span>
+                  <% else %>
+                    <span class="text-xs font-medium text-slate-700"><%= lead.lead_type %></span>
+                  <% end %>
+                </td>
+                <td class="p-4">
+                  <p class="font-bold text-slate-800"><%= lead.target_item_name %></p>
+                  <% if lead.product %>
+                    <span class="text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">Produto</span>
+                  <% elsif lead.service %>
+                    <span class="text-[10px] text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded">Serviço</span>
+                  <% else %>
+                    <span class="text-[10px] text-slate-500">Perfil Geral</span>
+                  <% end %>
+                </td>
+                <td class="p-4 text-slate-600">
+                  <%= lead.name.presence || "Não identificado (clique direto)" %>
+                </td>
+                <td class="p-4 text-slate-600">
+                  <%= lead.phone.presence || "-" %>
+                </td>
+                <td class="p-4 text-slate-500 text-xs">
+                  <%= lead.created_at.strftime("%d/%m/%Y às %H:%M") %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="p-10 text-center">
+        <p class="text-sm font-semibold text-slate-700">Nenhum contato registrado ainda.</p>
+        <p class="text-xs text-slate-400 mt-1">Conforme os clientes clicarem nos botões de WhatsApp de seus produtos e serviços, os registros aparecerão aqui.</p>
+      </div>
+    <% end %>
+  </div>
+</div>
