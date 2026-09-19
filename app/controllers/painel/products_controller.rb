@@ -46,7 +46,8 @@ module Painel
     private
 
     def set_product
-      @product = @current_business.products.find(params[:id])
+      @product = @current_business.products.find_by(slug: params[:id]) ||
+                 @current_business.products.find_by!(id: params[:id])
     end
 
     def product_params

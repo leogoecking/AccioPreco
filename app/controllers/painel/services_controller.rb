@@ -46,7 +46,8 @@ module Painel
     private
 
     def set_service
-      @service = @current_business.services.find(params[:id])
+      @service = @current_business.services.find_by(slug: params[:id]) ||
+                 @current_business.services.find_by!(id: params[:id])
     end
 
     def service_params

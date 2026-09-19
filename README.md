@@ -175,3 +175,10 @@ app/
 2. **URLs Amigáveis Nativas (`Sluggable`):** Implementado sem dependências de gems de terceiros (`friendly_id`), garantindo performance, previsibilidade e unicidade através de `parameterize`.
 3. **Hiperlocalismo sem PostGIS Prematuro:** Inicialmente, latitude/longitude são armazenadas como colunas decimais de precisão, preservando simplicidade enquanto viabiliza futura geolocalização e cálculo de distância.
 4. **Sem atrito para o consumidor:** Navegação, pesquisa e clique para WhatsApp são 100% livres de autenticação. Apenas comerciantes e administradores autenticam para gerenciar catálogo.
+
+---
+
+## 9. Backlog de Correções e Débitos Técnicos
+
+O mapeamento de melhorias secundárias, débitos técnicos e otimizações identificadas para as próximas fases está documentado em:
+* [`docs/BACKLOG_CORRECOES.md`](docs/BACKLOG_CORRECOES.md)
