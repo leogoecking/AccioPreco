@@ -128,4 +128,20 @@ class LeadsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to business_path(@business)
     assert_equal "Número de WhatsApp não informado por este estabelecimento.", flash[:alert]
   end
+
+  test "safe_whatsapp_target strictly validates https wa.me host and numeric path" do
+    controller = LeadsController.new
+
+    assert_includes controller.send(:safe_whatsapp_target, @business, text: "Oi"), "https://wa.me/5573999881122"
+
+    fake_business = Object.new
+    def fake_business.whatsapp_url(text: nil); "https://wa.me.attacker.com/5573999881122"; end
+    assert_nil controller.send(:safe_whatsapp_target, fake_business, text: "Oi")
+
+    def fake_business.whatsapp_url(text: nil); "http://wa.me/5573999881122"; end
+    assert_nil controller.send(:safe_whatsapp_target, fake_business, text: "Oi")
+
+    def fake_business.whatsapp_url(text: nil); "https://wa.me/malicious_path"; end
+    assert_nil controller.send(:safe_whatsapp_target, fake_business, text: "Oi")
+  end
 end

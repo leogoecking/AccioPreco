@@ -47,9 +47,9 @@ class LeadsController < ApplicationController
     end
 
     text = params[:text].presence || default_text
-    whatsapp_target = @business.whatsapp_url(text: text)
+    whatsapp_target = safe_whatsapp_target(@business, text: text)
 
-    if whatsapp_target.present? && whatsapp_target.start_with?("https://wa.me/")
+    if whatsapp_target.present?
       redirect_to whatsapp_target, allow_other_host: true
     else
       redirect_back fallback_location: business_path(@business),
@@ -58,6 +58,19 @@ class LeadsController < ApplicationController
   end
 
   private
+
+  def safe_whatsapp_target(business, text:)
+    raw_url = business.whatsapp_url(text: text)
+    return nil if raw_url.blank?
+
+    uri = URI.parse(raw_url)
+    return nil unless uri.is_a?(URI::HTTPS) && uri.host == "wa.me" && uri.port == 443
+    return nil unless uri.path.match?(%r{\A/\d{10,15}\z})
+
+    uri.to_s
+  rescue URI::InvalidURIError
+    nil
+  end
 
   def lead_params
     params.require(:lead).permit(:business_id, :service_id, :product_id, :name, :phone, :message, :lead_type)
