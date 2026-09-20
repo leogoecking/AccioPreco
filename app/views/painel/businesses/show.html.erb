@@ -1,72 +1,167 @@
 <% if @business %>
   <div class="max-w-4xl space-y-6">
-    <div class="flex items-center justify-between">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
         <h1 class="text-2xl font-black text-slate-900"><%= @business.name %></h1>
-        <p class="text-xs text-slate-500 mt-0.5">Informações cadastrais e perfil da sua empresa</p>
+        <p class="text-xs text-slate-500 mt-0.5">Perfil comercial e dados de atendimento visíveis aos consumidores</p>
       </div>
       <div class="flex items-center gap-2">
-        <%= link_to "Ver Perfil Público", business_path(@business), target: "_blank", class: "px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition" %>
-        <%= link_to "Editar Informações", edit_painel_business_path, class: "px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs transition" %>
+        <%= link_to business_path(@business), target: "_blank", class: "inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition" do %>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+          <span>Ver Página Pública</span>
+        <% end %>
+        <%= link_to edit_painel_business_path, class: "inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs transition" do %>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+          </svg>
+          <span>Editar Informações</span>
+        <% end %>
       </div>
     </div>
 
-    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-6">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <!-- Completeness Progress Bar Card -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
+      <div class="flex items-center justify-between gap-4 mb-2">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Completude do Perfil</span>
+          <span class="text-xs font-black px-2 py-0.5 rounded-full <%= @profile_completion[:percentage] >= 80 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' %>">
+            <%= @profile_completion[:percentage] %>%
+          </span>
+        </div>
+        <% if @profile_completion[:missing_steps].any? %>
+          <span class="text-xs text-amber-700 font-medium">
+            Falta preencher: <%= @profile_completion[:missing_steps].map { |s| s[:label] }.first(2).join(", ") %>
+          </span>
+        <% else %>
+          <span class="text-xs text-emerald-700 font-bold">✓ Perfil 100% completo!</span>
+        <% end %>
+      </div>
+      <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+        <div class="h-2 rounded-full <%= @profile_completion[:percentage] >= 80 ? 'bg-emerald-500' : 'bg-indigo-600' %> transition-all" style="width: <%= @profile_completion[:percentage] %>%;"></div>
+      </div>
+    </div>
+
+    <!-- Visual Identity Preview (Banner & Logo) -->
+    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+      <div class="h-36 sm:h-48 bg-slate-100 relative">
+        <% if @business.banner.attached? %>
+          <%= image_tag @business.banner, class: "w-full h-full object-cover" %>
+        <% else %>
+          <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs font-medium bg-slate-50">
+            Nenhum banner cadastrado (adicionar capa melhora a apresentação)
+          </div>
+        <% end %>
+
+        <div class="absolute -bottom-8 left-6">
+          <% if @business.logo.attached? %>
+            <%= image_tag @business.logo, class: "w-20 h-20 rounded-2xl object-cover border-4 border-white shadow-md bg-white" %>
+          <% else %>
+            <div class="w-20 h-20 rounded-2xl bg-indigo-600 border-4 border-white shadow-md flex items-center justify-center text-white text-2xl font-black">
+              <%= @business.name.first %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="pt-10 px-6 pb-6">
+        <h2 class="text-xl font-black text-slate-900"><%= @business.name %></h2>
+        <p class="text-xs text-slate-500 mt-0.5">
+          <%= @business.city %> - <%= @business.state %> ·
+          <span class="font-semibold text-indigo-600">
+            <%= @business.business_type == 'store' ? 'Loja de Produtos' : (@business.business_type == 'service_provider' ? 'Prestador de Serviços' : 'Produtos & Serviços') %>
+          </span>
+        </p>
+
+        <% if @business.description.present? %>
+          <div class="mt-4 pt-4 border-t border-slate-100 text-xs sm:text-sm text-slate-700 leading-relaxed">
+            <%= simple_format @business.description %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Details Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Contact Channels -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
+        <h3 class="text-sm font-black text-slate-900 border-b border-slate-100 pb-2">Canais de Contato</h3>
+
         <div>
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Tipo de Negócio</h3>
-          <p class="text-sm font-semibold text-slate-800 mt-1">
-            <%= @business.business_type == 'store' ? 'Loja de Produtos' : (@business.business_type == 'service_provider' ? 'Prestador de Serviços' : 'Ambos (Produtos e Serviços)') %>
-          </p>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">WhatsApp (Principal)</span>
+          <% if @business.whatsapp.present? %>
+            <div class="flex items-center justify-between mt-1">
+              <p class="text-sm font-bold text-slate-800"><%= @business.whatsapp %></p>
+              <%= link_to @business.whatsapp_url, target: "_blank", class: "text-xs font-bold text-emerald-600 hover:underline" do %>
+                Testar link ↗
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-xs text-amber-700 font-semibold mt-1">Não cadastrado (clientes não conseguirão chamar no WhatsApp!)</p>
+          <% end %>
         </div>
 
         <div>
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Status de Verificação</h3>
-          <p class="text-sm font-semibold mt-1">
-            <% if @business.verified? %>
-              <span class="text-emerald-600">✓ Verificado</span>
-            <% else %>
-              <span class="text-slate-500">Aguardando verificação</span>
-            <% end %>
-          </p>
-        </div>
-
-        <div>
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">WhatsApp</h3>
-          <p class="text-sm font-semibold text-slate-800 mt-1"><%= @business.whatsapp.presence || "Não informado" %></p>
-        </div>
-
-        <div>
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Telefone Fixo</h3>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Telefone Fixo / Adicional</span>
           <p class="text-sm font-semibold text-slate-800 mt-1"><%= @business.phone.presence || "Não informado" %></p>
         </div>
 
         <div>
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">E-mail</h3>
-          <p class="text-sm font-semibold text-slate-800 mt-1"><%= @business.email.presence || "Não informado" %></p>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Instagram</span>
+          <% if @business.instagram.present? %>
+            <div class="flex items-center justify-between mt-1">
+              <p class="text-sm font-bold text-slate-800">@<%= @business.instagram_handle %></p>
+              <%= link_to @business.instagram_url, target: "_blank", class: "text-xs font-bold text-indigo-600 hover:underline" do %>
+                Abrir perfil ↗
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-xs text-slate-400 mt-1">Não informado</p>
+          <% end %>
         </div>
 
         <div>
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Instagram</h3>
-          <p class="text-sm font-semibold text-slate-800 mt-1"><%= @business.instagram.presence || "Não informado" %></p>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">E-mail Comercial</span>
+          <p class="text-sm font-semibold text-slate-800 mt-1"><%= @business.email.presence || "Não informado" %></p>
+        </div>
+      </div>
+
+      <!-- Address & Location -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
+        <h3 class="text-sm font-black text-slate-900 border-b border-slate-100 pb-2">Localização Física</h3>
+
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Endereço Completo</span>
+          <p class="text-sm font-semibold text-slate-800 mt-1">
+            <%= @business.full_address.presence || "Endereço não cadastrado" %>
+          </p>
         </div>
 
-        <div class="sm:col-span-2">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Endereço Completo</h3>
-          <p class="text-sm font-semibold text-slate-800 mt-1"><%= @business.full_address.presence || "Não informado" %></p>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Bairro</span>
+            <p class="text-sm font-semibold text-slate-800 mt-1"><%= @business.neighborhood.presence || "Não informado" %></p>
+          </div>
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">CEP</span>
+            <p class="text-sm font-semibold text-slate-800 mt-1"><%= @business.postal_code.presence || "Não informado" %></p>
+          </div>
         </div>
 
-        <div class="sm:col-span-2">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Descrição do Negócio</h3>
-          <p class="text-sm text-slate-700 mt-1 leading-relaxed"><%= @business.description.presence || "Nenhuma descrição informada." %></p>
+        <div class="pt-2">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Cidade e Região</span>
+          <p class="text-sm font-semibold text-slate-800 mt-1"><%= @business.city %> - <%= @business.state %></p>
         </div>
       </div>
     </div>
   </div>
 <% else %>
-  <div class="bg-white rounded-3xl border border-slate-200 p-8 text-center max-w-lg mx-auto">
+  <div class="bg-white rounded-3xl border border-slate-200 p-8 text-center max-w-lg mx-auto shadow-sm">
+    <div class="text-3xl mb-2">🏢</div>
     <h2 class="text-xl font-bold text-slate-900 mb-2">Nenhuma empresa cadastrada</h2>
-    <p class="text-xs text-slate-500 mb-6">Cadastre sua primeira empresa para gerenciar produtos e serviços.</p>
-    <%= link_to "Cadastrar Empresa", new_painel_business_path, class: "px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-xs" %>
+    <p class="text-xs text-slate-500 mb-6">Cadastre sua empresa para gerenciar produtos e serviços no catálogo do Accio Preço.</p>
+    <%= link_to "Cadastrar Empresa", new_painel_business_path, class: "px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs shadow-xs transition" %>
   </div>
 <% end %>

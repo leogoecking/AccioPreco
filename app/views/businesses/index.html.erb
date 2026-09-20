@@ -1,45 +1,29 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="mb-8">
-    <h1 class="text-3xl font-black text-slate-900 tracking-tight">Empresas e Profissionais Locais</h1>
-    <p class="text-sm text-slate-500 mt-1">Conheça os estabelecimentos comerciais e prestadores em Teixeira de Freitas - BA</p>
-  </div>
+<% content_for :title, "Empresas em Teixeira de Freitas | Accio Preço" %>
+<% content_for :meta_description, "Guia de comércios, lojas físicas, oficinas e prestadores de serviços em Teixeira de Freitas - BA." %>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    <% @businesses.each do |business| %>
-      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs hover:shadow-md transition flex flex-col justify-between">
-        <div>
-          <div class="flex items-center justify-between mb-3">
-            <span class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold text-sm">
-              <%= business.name[0..1].upcase %>
-            </span>
-            <% if business.verified? %>
-              <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                Verificado
-              </span>
-            <% end %>
-          </div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Empresas e Profissionais Locais</h1>
+      <p class="text-xs sm:text-sm text-slate-500 mt-1">Conheça os estabelecimentos comerciais e autônomos de Teixeira de Freitas</p>
+    </div>
 
-          <h3 class="font-bold text-slate-900 text-lg mb-1">
-            <%= link_to business.name, business_path(business), class: "hover:text-indigo-600 transition" %>
-          </h3>
-          <p class="text-xs text-slate-500 mb-2">
-            <%= business.neighborhood.presence || business.city %> · <%= business.business_type == 'store' ? 'Loja' : (business.business_type == 'service_provider' ? 'Serviços' : 'Loja & Serviços') %>
-          </p>
-          <p class="text-xs text-slate-600 line-clamp-3 leading-relaxed">
-            <%= business.description %>
-          </p>
-        </div>
-
-        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-          <%= link_to "Ver catálogo", business_path(business), class: "text-xs font-bold text-indigo-600 hover:underline" %>
-
-          <% if business.whatsapp.present? %>
-            <%= link_to business.whatsapp_url(text: "Olá! Encontrei sua empresa no Accio Preço."), target: "_blank", class: "px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs" do %>
-              WhatsApp
-            <% end %>
-          <% end %>
-        </div>
-      </div>
+    <%= link_to search_path(type: "empresas"), class: "inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 text-xs font-bold transition" do %>
+      <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <span>Pesquisar empresas</span>
     <% end %>
   </div>
+
+  <% if @businesses.any? %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <% @businesses.each do |business| %>
+        <%= render "shared/business_card", business: business %>
+      <% end %>
+    </div>
+    <%= render "shared/pagination", pagy: @pagy %>
+  <% else %>
+    <%= render "shared/empty_state", title: "Nenhuma empresa cadastrada no momento", message: "Em breve novas empresas parceiras estarão cadastradas." %>
+  <% end %>
 </div>

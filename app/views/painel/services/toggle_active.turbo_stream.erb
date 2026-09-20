@@ -1,0 +1,7 @@
+<%= turbo_stream.replace dom_id(@service) do %>
+  <%= render "painel/services/service_row", service: @service %>
+<% end %>
+
+<%= turbo_stream.replace "mobile_#{dom_id(@service)}" do %>
+  <%= render "painel/services/service_card", service: @service %>
+<% end %>

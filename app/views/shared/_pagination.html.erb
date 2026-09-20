@@ -1,0 +1,104 @@
+<%# Responsive Tailwind Pagination Component
+  Locals:
+    pagy: Pagy instance
+%>
+<% if local_assigns[:pagy].present? && pagy.pages > 1 %>
+  <nav class="flex items-center justify-between border-t border-slate-200 px-4 sm:px-0 py-6 mt-8" aria-label="Paginação">
+    <!-- Mobile: Previous / Next buttons -->
+    <div class="flex w-0 flex-1 sm:hidden">
+      <% if pagy.prev %>
+        <%= link_to url_for(request.query_parameters.merge(page: pagy.prev)),
+          class: "inline-flex items-center gap-1 rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition" do %>
+          <span>← Anterior</span>
+        <% end %>
+      <% else %>
+        <span class="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-400 cursor-not-allowed">
+          <span>← Anterior</span>
+        </span>
+      <% end %>
+    </div>
+
+    <!-- Desktop: Page links -->
+    <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+      <div>
+        <p class="text-xs text-slate-500">
+          Mostrando de
+          <span class="font-bold text-slate-700"><%= pagy.from %></span>
+          a
+          <span class="font-bold text-slate-700"><%= pagy.to %></span>
+          de
+          <span class="font-bold text-slate-700"><%= pagy.count %></span>
+          resultados
+        </p>
+      </div>
+
+      <div>
+        <div class="inline-flex items-center gap-1">
+          <!-- Previous Button -->
+          <% if pagy.prev %>
+            <%= link_to url_for(request.query_parameters.merge(page: pagy.prev)),
+              class: "p-2 rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition",
+              title: "Página anterior" do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            <% end %>
+          <% else %>
+            <span class="p-2 text-slate-300 cursor-not-allowed">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </span>
+          <% end %>
+
+          <!-- Page numbers -->
+          <% pagy.series.each do |item| %>
+            <% if item.is_a?(Integer) %>
+              <%= link_to item, url_for(request.query_parameters.merge(page: item)),
+                class: "w-9 h-9 flex items-center justify-center rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition" %>
+            <% elsif item.is_a?(String) %>
+              <span class="w-9 h-9 flex items-center justify-center rounded-xl text-xs font-black bg-indigo-600 text-white shadow-xs">
+                <%= item %>
+              </span>
+            <% elsif item == :gap %>
+              <span class="w-8 h-9 flex items-center justify-center text-xs text-slate-400">
+                &hellip;
+              </span>
+            <% end %>
+          <% end %>
+
+          <!-- Next Button -->
+          <% if pagy.next %>
+            <%= link_to url_for(request.query_parameters.merge(page: pagy.next)),
+              class: "p-2 rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition",
+              title: "Próxima página" do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            <% end %>
+          <% else %>
+            <span class="p-2 text-slate-300 cursor-not-allowed">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile: Next button -->
+    <div class="flex w-0 flex-1 justify-end sm:hidden">
+      <% if pagy.next %>
+        <%= link_to url_for(request.query_parameters.merge(page: pagy.next)),
+          class: "inline-flex items-center gap-1 rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition" do %>
+          <span>Próxima →</span>
+        <% end %>
+      <% else %>
+        <span class="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-400 cursor-not-allowed">
+          <span>Próxima →</span>
+        </span>
+      <% end %>
+    </div>
+  </nav>
+<% end %>

@@ -52,4 +52,65 @@ class PublicPagesTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, "Cabo USB-C"
   end
+
+  test "inactive businesses products and services return 404 and are excluded from public listings" do
+    @business.update!(active: false)
+
+    # Direct access returns 404
+    get product_path(@product)
+    assert_response :not_found
+
+    get service_path(@service)
+    assert_response :not_found
+
+    get business_path(@business)
+    assert_response :not_found
+
+    # Excluded from lists
+    get products_path
+    assert_response :success
+    assert_not_includes response.body, "Cabo USB-C"
+
+    get services_path
+    assert_response :success
+    assert_not_includes response.body, "Troca de Conector"
+
+    get search_path, params: { q: "USB" }
+    assert_response :success
+    assert_not_includes response.body, "Cabo USB-C"
+  end
+
+  test "displays business logo and banner to other users on public business, product, and service pages" do
+    @business.logo.attach(
+      io: File.open(Rails.root.join("test/fixtures/files/sample_logo.png")),
+      filename: "sample_logo.png",
+      content_type: "image/png"
+    )
+    @business.banner.attach(
+      io: File.open(Rails.root.join("test/fixtures/files/sample_logo.png")),
+      filename: "sample_banner.png",
+      content_type: "image/png"
+    )
+
+    # 1. Public business page shows logo and banner
+    get business_path(@business)
+    assert_response :success
+    assert_select "img[alt='Logo de #{@business.name}']"
+    assert_select "img[alt='Banner de #{@business.name}']"
+
+    # 2. Public businesses list shows logo in business card
+    get businesses_path
+    assert_response :success
+    assert_select "img[alt='Logo de #{@business.name}']"
+
+    # 3. Public product page shows logo in 'Vendido por'
+    get product_path(@product)
+    assert_response :success
+    assert_select "img[alt='Logo de #{@business.name}']"
+
+    # 4. Public service page shows logo in 'Prestador responsável'
+    get service_path(@service)
+    assert_response :success
+    assert_select "img[alt='Logo de #{@business.name}']"
+  end
 end

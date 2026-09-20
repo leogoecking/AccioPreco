@@ -1,11 +1,9 @@
-<div class="max-w-3xl">
-  <div class="mb-6">
+<div class="max-w-4xl space-y-6">
+  <div>
     <%= link_to "← Voltar aos dados da empresa", painel_business_path, class: "text-xs font-semibold text-indigo-600 hover:underline" %>
-    <h1 class="text-2xl font-black text-slate-900 mt-2">Editar Dados da Empresa</h1>
-    <p class="text-xs text-slate-500">Mantenha os contatos e endereços sempre atualizados</p>
+    <h1 class="text-2xl font-black text-slate-900 mt-2">Editar Informações da Empresa</h1>
+    <p class="text-xs text-slate-500">Mantenha contatos, fotos e endereços sempre atualizados para os clientes da região</p>
   </div>
 
-  <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs">
-    <%= render "form", business: @business %>
-  </div>
+  <%= render "form", business: @business %>
 </div>

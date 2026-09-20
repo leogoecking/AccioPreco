@@ -2,12 +2,12 @@ class ServicesController < ApplicationController
   allow_unauthenticated_access
 
   def index
-    @services = Service.active.recent.includes(:business, :category)
+    @pagy, @services = pagy(Service.publicly_visible.recent.includes(:business, :category, images_attachments: :blob), limit: 12)
     @categories = Category.active.for_services
   end
 
   def show
-    @service = Service.active.find_by!(slug: params[:slug])
+    @service = Service.publicly_visible.find_by!(slug: params[:slug])
     @business = @service.business
     @related_services = @business.services.active.where.not(id: @service.id).limit(4)
   end

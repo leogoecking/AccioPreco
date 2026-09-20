@@ -1,26 +1,105 @@
 <div class="space-y-6">
+  <!-- Header -->
   <div>
     <h1 class="text-2xl font-black text-slate-900">Contatos e Leads Recebidos</h1>
-    <p class="text-xs text-slate-500 mt-0.5">Histórico de intenções comerciais registradas pelos clientes</p>
+    <p class="text-xs text-slate-500 mt-0.5">Histórico de clientes locais que entraram em contato ou solicitaram orçamentos</p>
   </div>
 
-  <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-    <% if @leads.any? %>
+  <!-- Filter Tabs -->
+  <div class="flex items-center gap-2 border-b border-slate-200 pb-3 overflow-x-auto">
+    <%= link_to painel_leads_path, class: "px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 #{params[:type].blank? ? 'bg-indigo-600 text-white shadow-xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}" do %>
+      Todos os Contatos <span class="ml-1 opacity-80">(<%= @total_count %>)</span>
+    <% end %>
+
+    <%= link_to painel_leads_path(type: "whatsapp"), class: "px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 #{params[:type] == 'whatsapp' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}" do %>
+      💬 Cliques no WhatsApp <span class="ml-1 opacity-80">(<%= @whatsapp_count %>)</span>
+    <% end %>
+
+    <%= link_to painel_leads_path(type: "quote"), class: "px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 #{params[:type] == 'quote' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}" do %>
+      📋 Pedidos de Orçamento <span class="ml-1 opacity-80">(<%= @quotes_count %>)</span>
+    <% end %>
+  </div>
+
+  <% if @leads.any? %>
+    <!-- Mobile Cards View -->
+    <div class="lg:hidden space-y-3">
+      <% @leads.each do |lead| %>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+          <div class="flex items-center justify-between">
+            <% if lead.lead_type == "whatsapp_click" %>
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> WhatsApp
+              </span>
+            <% elsif lead.lead_type == "quote_request" %>
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Pedido de Orçamento
+              </span>
+            <% else %>
+              <span class="text-[10px] font-medium text-slate-600"><%= lead.lead_type %></span>
+            <% end %>
+
+            <span class="text-[11px] text-slate-400">
+              <%= lead.created_at.strftime("%d/%m/%Y %H:%M") %>
+            </span>
+          </div>
+
+          <div>
+            <p class="text-xs text-slate-500">Item de interesse:</p>
+            <p class="text-sm font-bold text-slate-900 leading-snug">
+              <%= lead.target_item_name %>
+            </p>
+          </div>
+
+          <% if lead.name.present? || lead.phone.present? %>
+            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-100 text-xs space-y-1">
+              <% if lead.name.present? %>
+                <p class="text-slate-800"><span class="text-slate-400 font-semibold">Cliente:</span> <strong><%= lead.name %></strong></p>
+              <% end %>
+              <% if lead.phone.present? %>
+                <p class="text-slate-800"><span class="text-slate-400 font-semibold">Telefone:</span> <span class="font-mono"><%= lead.phone %></span></p>
+              <% end %>
+              <% if lead.message.present? %>
+                <p class="text-slate-600 italic pt-1 border-t border-slate-200/60 mt-1">"<%= lead.message %>"</p>
+              <% end %>
+            </div>
+          <% end %>
+
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+            <% if lead.phone.present? && lead.customer_whatsapp_url.present? %>
+              <%= link_to lead.customer_whatsapp_url, target: "_blank", rel: "noopener", class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-2xs transition" do %>
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+                </svg>
+                <span>Responder no WhatsApp</span>
+              <% end %>
+            <% else %>
+              <span class="text-xs text-slate-400">Clique direto no WhatsApp</span>
+            <% end %>
+
+            <%= link_to "Ver detalhes", painel_lead_path(lead), class: "text-xs font-bold text-indigo-600 hover:underline" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Desktop Table View -->
+    <div class="hidden lg:block bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-              <th class="p-4">Tipo de Ação</th>
+              <th class="p-4">Tipo</th>
               <th class="p-4">Item de Interesse</th>
-              <th class="p-4">Nome do Interessado</th>
-              <th class="p-4">Telefone</th>
+              <th class="p-4">Cliente</th>
+              <th class="p-4">Mensagem / Observação</th>
               <th class="p-4">Data e Hora</th>
+              <th class="p-4 text-right">Ação</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 text-sm">
             <% @leads.each do |lead| %>
               <tr class="hover:bg-slate-50/80 transition">
-                <td class="p-4">
+                <td class="p-4 whitespace-nowrap">
                   <% if lead.lead_type == "whatsapp_click" %>
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                       <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Clique no WhatsApp
@@ -33,35 +112,59 @@
                     <span class="text-xs font-medium text-slate-700"><%= lead.lead_type %></span>
                   <% end %>
                 </td>
+
                 <td class="p-4">
                   <p class="font-bold text-slate-800"><%= lead.target_item_name %></p>
                   <% if lead.product %>
-                    <span class="text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">Produto</span>
+                    <span class="text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded font-medium">Produto</span>
                   <% elsif lead.service %>
-                    <span class="text-[10px] text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded">Serviço</span>
+                    <span class="text-[10px] text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded font-medium">Serviço</span>
                   <% else %>
-                    <span class="text-[10px] text-slate-500">Perfil Geral</span>
+                    <span class="text-[10px] text-slate-500">Página Principal</span>
                   <% end %>
                 </td>
-                <td class="p-4 text-slate-600">
-                  <%= lead.name.presence || "Não identificado (clique direto)" %>
+
+                <td class="p-4">
+                  <p class="font-bold text-slate-800 text-xs"><%= lead.name.presence || "Não informado" %></p>
+                  <p class="text-xs text-slate-500 font-mono"><%= lead.phone.presence || "-" %></p>
                 </td>
-                <td class="p-4 text-slate-600">
-                  <%= lead.phone.presence || "-" %>
+
+                <td class="p-4 max-w-xs truncate text-xs text-slate-600">
+                  <%= lead.message.presence || "-" %>
                 </td>
-                <td class="p-4 text-slate-500 text-xs">
+
+                <td class="p-4 text-slate-500 text-xs whitespace-nowrap">
                   <%= lead.created_at.strftime("%d/%m/%Y às %H:%M") %>
+                </td>
+
+                <td class="p-4 text-right whitespace-nowrap">
+                  <div class="inline-flex items-center gap-2">
+                    <% if lead.phone.present? && lead.customer_whatsapp_url.present? %>
+                      <%= link_to lead.customer_whatsapp_url, target: "_blank", rel: "noopener", class: "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-2xs", title: "Responder no WhatsApp" do %>
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+                        </svg>
+                        Responder
+                      <% end %>
+                    <% end %>
+
+                    <%= link_to "Detalhes", painel_lead_path(lead), class: "text-xs font-bold text-slate-600 hover:text-indigo-600 px-2 py-1 rounded-lg hover:bg-slate-100 transition" %>
+                  </div>
                 </td>
               </tr>
             <% end %>
           </tbody>
         </table>
       </div>
-    <% else %>
-      <div class="p-10 text-center">
-        <p class="text-sm font-semibold text-slate-700">Nenhum contato registrado ainda.</p>
-        <p class="text-xs text-slate-400 mt-1">Conforme os clientes clicarem nos botões de WhatsApp de seus produtos e serviços, os registros aparecerão aqui.</p>
-      </div>
-    <% end %>
-  </div>
+    </div>
+
+    <!-- Pagination -->
+    <%= render "shared/pagination", pagy: @pagy %>
+  <% else %>
+    <div class="bg-white rounded-2xl border border-slate-200 p-10 text-center shadow-xs">
+      <div class="text-3xl mb-2">💬</div>
+      <p class="text-sm font-bold text-slate-800">Nenhum contato encontrado nesta categoria.</p>
+      <p class="text-xs text-slate-500 mt-1 max-w-md mx-auto">Conforme os visitantes clicarem nos botões de WhatsApp de seus produtos e serviços no Accio Preço, as conversas aparecerão aqui.</p>
+    </div>
+  <% end %>
 </div>

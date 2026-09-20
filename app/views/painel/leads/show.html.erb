@@ -1,0 +1,74 @@
+<div class="max-w-2xl space-y-6">
+  <div>
+    <%= link_to "← Voltar à lista de contatos", painel_leads_path, class: "text-xs font-semibold text-indigo-600 hover:underline" %>
+    <h1 class="text-2xl font-black text-slate-900 mt-2">Detalhes do Contato</h1>
+    <p class="text-xs text-slate-500">Registrado em <%= @lead.created_at.strftime("%d/%m/%Y às %H:%M") %></p>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-6">
+    <!-- Header Type -->
+    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+      <div>
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Origem da Ação</span>
+        <div class="mt-1">
+          <% if @lead.lead_type == "whatsapp_click" %>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Clique Direto no WhatsApp
+            </span>
+          <% elsif @lead.lead_type == "quote_request" %>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+              <span class="w-2 h-2 rounded-full bg-indigo-500"></span> Solicitação de Orçamento
+            </span>
+          <% else %>
+            <span class="text-xs font-semibold text-slate-700"><%= @lead.lead_type %></span>
+          <% end %>
+        </div>
+      </div>
+
+      <% if @lead.phone.present? && @lead.customer_whatsapp_url.present? %>
+        <%= link_to @lead.customer_whatsapp_url, target: "_blank", rel: "noopener", class: "inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition" do %>
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+          </svg>
+          <span>Abrir conversa no WhatsApp</span>
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- Target Item -->
+    <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+      <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Item de Interesse</span>
+      <p class="text-base font-black text-slate-900 mt-0.5"><%= @lead.target_item_name %></p>
+      <div class="mt-2">
+        <% if @lead.product %>
+          <%= link_to "Ver produto no catálogo público →", product_path(@lead.product), target: "_blank", class: "text-xs font-bold text-indigo-600 hover:underline" %>
+        <% elsif @lead.service %>
+          <%= link_to "Ver serviço no catálogo público →", service_path(@lead.service), target: "_blank", class: "text-xs font-bold text-indigo-600 hover:underline" %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Customer Information -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Nome do Interessado</span>
+        <p class="text-sm font-bold text-slate-800 mt-1"><%= @lead.name.presence || "Não identificado (clique direto)" %></p>
+      </div>
+
+      <div>
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Telefone / WhatsApp</span>
+        <p class="text-sm font-bold text-slate-800 font-mono mt-1"><%= @lead.phone.presence || "Não informado" %></p>
+      </div>
+    </div>
+
+    <!-- Message / Observation -->
+    <% if @lead.message.present? %>
+      <div>
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Mensagem Enviada pelo Cliente</span>
+        <div class="mt-1 p-4 bg-indigo-50/50 rounded-xl border border-indigo-100 text-sm text-slate-800 leading-relaxed">
+          <%= simple_format @lead.message %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

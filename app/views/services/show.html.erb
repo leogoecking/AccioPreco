@@ -1,50 +1,89 @@
 <% content_for :title, "#{@service.name} em Teixeira de Freitas | Accio Preço" %>
 <% content_for :meta_description, "#{@service.name} oferecido por #{@business.name} em Teixeira de Freitas - BA. Preço: #{@service.formatted_price}. Solicite seu orçamento via WhatsApp." %>
 
-<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="mb-6">
-    <%= link_to "← Voltar aos serviços", services_path, class: "text-sm text-indigo-600 font-semibold hover:underline" %>
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8" data-controller="modal">
+  <!-- Breadcrumb -->
+  <div class="mb-6 flex items-center gap-2 text-xs text-slate-500">
+    <%= link_to "Início", root_path, class: "hover:text-indigo-600 transition" %>
+    <span>/</span>
+    <%= link_to "Serviços", services_path, class: "hover:text-indigo-600 transition" %>
+    <span>/</span>
+    <%= link_to @service.category.name, category_path(@service.category), class: "hover:text-indigo-600 transition" %>
+    <span>/</span>
+    <span class="font-bold text-slate-800 truncate"><%= @service.name %></span>
   </div>
 
+  <!-- Main Service Card -->
   <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs p-6 sm:p-8">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <!-- Media / Info Card -->
-      <div class="bg-slate-50 rounded-2xl border border-slate-200 p-8 flex flex-col justify-between">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+      <!-- Media / Info Summary -->
+      <div class="bg-slate-50 rounded-2xl border border-slate-200 p-6 sm:p-8 flex flex-col justify-between">
         <div>
-          <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-indigo-100 text-indigo-800">
-            <%= @service.category.name %>
-          </span>
+          <!-- Badges -->
+          <div class="flex items-center gap-2 mb-4">
+            <%= link_to @service.category.name, category_path(@service.category), class: "text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-indigo-100 text-indigo-800 hover:bg-indigo-200 transition" %>
+            <% if @service.home_service? %>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+                🏠 Atendimento a Domicílio
+              </span>
+            <% end %>
+          </div>
 
-          <div class="mt-4">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Modalidade</h3>
-            <p class="text-sm font-semibold text-slate-800 mt-1">
-              <% if @service.home_service? %>
-                🏠 Atendimento no local / a domicílio em Teixeira de Freitas
-              <% else %>
-                🏢 Atendimento presencial no estabelecimento
-              <% end %>
-            </p>
+          <div class="space-y-4">
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Modalidade de Atendimento</h3>
+              <p class="text-sm font-semibold text-slate-800 mt-1">
+                <% if @service.home_service? %>
+                  🏠 Atende no local / a domicílio em Teixeira de Freitas e região
+                <% else %>
+                  🏢 Atendimento presencial no estabelecimento
+                <% end %>
+              </p>
+            </div>
+
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Prestador responsável</h3>
+              <div class="mt-1.5 flex items-center gap-3">
+                <% if @business.logo.attached? %>
+                  <%= image_tag @business.logo, class: "w-10 h-10 rounded-xl object-cover border border-slate-200 bg-white shrink-0 shadow-2xs", alt: "Logo de #{@business.name}" %>
+                <% else %>
+                  <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-black text-xs shrink-0 shadow-2xs">
+                    <%= @business.name[0..1].upcase %>
+                  </div>
+                <% end %>
+
+                <div>
+                  <p class="text-sm font-bold text-slate-900 leading-tight">
+                    <%= link_to @business.name, business_path(@business), class: "text-indigo-600 hover:underline" %>
+                  </p>
+                  <p class="text-xs text-slate-500 mt-0.5"><%= @business.full_address %></p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="mt-8 p-5 bg-white rounded-2xl border border-slate-200">
-          <p class="text-xs font-bold uppercase text-slate-400">Valor estimado</p>
-          <div class="text-2xl font-black text-indigo-700 mt-1">
+        <!-- Price Estimate Card -->
+        <div class="mt-8 p-5 bg-white rounded-2xl border border-slate-200 shadow-2xs">
+          <p class="text-xs font-bold uppercase text-slate-400">Estimativa de Preço</p>
+          <div class="text-2xl sm:text-3xl font-black text-indigo-700 mt-1">
             <%= @service.formatted_price %>
           </div>
-          <p class="text-xs text-slate-500 mt-1">O valor final pode variar conforme análise técnica ou escopo.</p>
+          <p class="text-xs text-slate-500 mt-1">
+            <%= @service.price_description.presence || "O valor final pode variar conforme análise técnica ou complexidade." %>
+          </p>
         </div>
       </div>
 
-      <!-- Details & CTA -->
+      <!-- Details & Actions -->
       <div class="flex flex-col justify-between">
         <div>
           <h1 class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
             <%= @service.name %>
           </h1>
 
-          <p class="text-sm text-slate-500 mt-1">
-            Prestado por <%= link_to @business.name, business_path(@business), class: "font-semibold text-indigo-600 hover:underline" %>
+          <p class="text-xs text-slate-500 mt-2">
+            Profissional qualificado em Teixeira de Freitas · Resposta rápida
           </p>
 
           <div class="mt-6 space-y-2">
@@ -53,26 +92,135 @@
               <%= @service.description %>
             </p>
           </div>
-
-          <div class="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-            <h4 class="text-xs font-bold text-slate-900 uppercase">Localização</h4>
-            <p class="text-xs text-slate-600 mt-1"><%= @business.full_address %></p>
-          </div>
         </div>
 
-        <!-- Big WhatsApp CTA (Mobile-First) -->
-        <div class="mt-8 pt-6 border-t border-slate-100">
+        <!-- Action CTAs -->
+        <div class="mt-8 pt-6 border-t border-slate-100 space-y-3">
           <% if @business.whatsapp.present? %>
-            <%= link_to @business.whatsapp_url(text: "Olá! Vi o serviço '#{@service.name}' no Accio Preço e gostaria de solicitar um orçamento para Teixeira de Freitas."), target: "_blank", rel: "noopener", class: "w-full py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-base flex items-center justify-center gap-3 shadow-lg shadow-emerald-200/60 transition" do %>
-              <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+            <%= link_to whatsapp_click_path(business_id: @business.id, service_id: @service.id),
+              target: "_blank",
+              rel: "noopener",
+              data: { turbo: false },
+              class: "w-full py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-base flex items-center justify-center gap-3 shadow-lg shadow-emerald-200/60 transition active:scale-[0.99]" do %>
+              <svg class="w-6 h-6 shrink-0 fill-current" viewBox="0 0 24 24">
                 <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.585 1.961.879 2.796.88h.005c3.181 0 5.767-2.586 5.768-5.766 0-3.18-2.586-5.767-5.773-5.767zm3.376 8.232c-.144.405-.837.775-1.17.824-.312.045-.718.067-2.146-.525-1.826-.757-3.003-2.617-3.094-2.738-.091-.122-.74-1.026-.74-1.956 0-.931.488-1.389.66-1.58.173-.191.376-.239.502-.239.126 0 .252.001.362.007.116.006.27-.044.422.324.156.377.534 1.306.58 1.401.047.095.078.207.016.332-.063.125-.094.203-.187.312-.093.11-.197.245-.281.33-.094.094-.192.197-.082.386.11.19.489.807 1.05 1.306.722.643 1.331.842 1.52.937.19.094.3.079.412-.047.112-.126.48-.56.608-.752.128-.192.257-.16.432-.095.176.064 1.117.527 1.31.624.192.096.321.144.368.224.047.079.047.46-.097.865z"/>
               </svg>
               <span>Solicitar Orçamento no WhatsApp</span>
             <% end %>
-            <p class="text-center text-xs text-slate-400 mt-2">Sem cadastro necessário · Fale direto com o profissional</p>
           <% end %>
+
+          <!-- Fast Quote Modal Trigger Button -->
+          <button type="button"
+            data-action="click->modal#open"
+            class="w-full py-3.5 px-6 rounded-2xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-sm flex items-center justify-center gap-2 border border-indigo-200/80 transition cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span>Ou deixe seus dados para contato</span>
+          </button>
+          <p class="text-center text-xs text-slate-400">Sem taxas de intermediação · Negociação direta</p>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Inline Quote Request Section (also accessible directly) -->
+  <div id="orcamento" class="mt-12 bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs">
+    <div class="max-w-xl mx-auto">
+      <div class="text-center mb-6">
+        <h2 class="text-xl font-black text-slate-900">Solicitar Orçamento Direto</h2>
+        <p class="text-xs text-slate-500 mt-1">Preencha o formulário abaixo e <%= @business.name %> entrará em contato com você pelo WhatsApp.</p>
+      </div>
+
+      <div id="quote_request_form_<%= @service.id %>">
+        <div id="quote_request_errors_<%= @service.id %>"></div>
+
+        <%= form_with model: Lead.new, url: leads_path, class: "space-y-4" do |f| %>
+          <%= f.hidden_field :business_id, value: @business.id %>
+          <%= f.hidden_field :service_id, value: @service.id %>
+          <%= f.hidden_field :lead_type, value: "quote_request" %>
+
+          <div>
+            <%= f.label :name, "Seu Nome Completo *", class: "block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1" %>
+            <%= f.text_field :name, required: true, placeholder: "Ex: Carlos Silva", class: "w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+          </div>
+
+          <div>
+            <%= f.label :phone, "Seu WhatsApp com DDD *", class: "block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1" %>
+            <%= f.text_field :phone, required: true, placeholder: "Ex: (73) 99999-8888", class: "w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+          </div>
+
+          <div>
+            <%= f.label :message, "Detalhes do seu pedido ou necessidade", class: "block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1" %>
+            <%= f.text_area :message, rows: 3, placeholder: "Descreva o que precisa, bairro onde será o atendimento ou dúvidas sobre o serviço...", class: "w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+          </div>
+
+          <%= f.submit "Enviar Solicitação de Orçamento", data: { turbo_submits_with: "Enviando solicitação..." }, class: "w-full py-3.5 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm transition shadow-md shadow-indigo-200 cursor-pointer" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Component for Quote Request -->
+  <div data-modal-target="dialog" data-action="click->modal#backdropClick" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div data-modal-target="content" class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative">
+      <button type="button" data-action="click->modal#close" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 p-1" title="Fechar">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <div class="mb-5">
+        <span class="text-xs font-bold uppercase text-indigo-600">Orçamento Rápido</span>
+        <h3 class="text-xl font-black text-slate-900 mt-1">Solicitar orçamento para <%= @service.name %></h3>
+        <p class="text-xs text-slate-500 mt-1">Seus dados serão enviados diretamente para <%= @business.name %>.</p>
+      </div>
+
+      <div id="quote_request_form_modal_<%= @service.id %>">
+        <%= form_with model: Lead.new, url: leads_path, class: "space-y-4" do |f| %>
+          <%= f.hidden_field :business_id, value: @business.id %>
+          <%= f.hidden_field :service_id, value: @service.id %>
+          <%= f.hidden_field :lead_type, value: "quote_request" %>
+
+          <div>
+            <%= f.label :name, "Seu Nome *", class: "block text-xs font-bold text-slate-700 mb-1" %>
+            <%= f.text_field :name, required: true, placeholder: "Ex: Carlos Silva", class: "w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500" %>
+          </div>
+
+          <div>
+            <%= f.label :phone, "Seu WhatsApp *", class: "block text-xs font-bold text-slate-700 mb-1" %>
+            <%= f.text_field :phone, required: true, placeholder: "Ex: (73) 99999-8888", class: "w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500" %>
+          </div>
+
+          <div>
+            <%= f.label :message, "Mensagem / Detalhes", class: "block text-xs font-bold text-slate-700 mb-1" %>
+            <%= f.text_area :message, rows: 3, placeholder: "Descreva o que você precisa...", class: "w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500" %>
+          </div>
+
+          <div class="pt-2 flex items-center justify-end gap-3">
+            <button type="button" data-action="click->modal#close" class="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-800">
+              Cancelar
+            </button>
+            <%= f.submit "Enviar Orçamento", data: { turbo_submits_with: "Enviando..." }, class: "px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm cursor-pointer" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Services Section -->
+  <% if @related_services.any? %>
+    <div class="mt-14">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-black text-slate-900">Outros serviços de <%= @business.name %></h2>
+        <%= link_to "Ver todos do profissional →", business_path(@business), class: "text-xs font-bold text-indigo-600 hover:underline" %>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @related_services.each do |service| %>
+          <%= render "shared/service_card", service: service %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 </div>

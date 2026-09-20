@@ -1,49 +1,38 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="mb-8">
-    <h1 class="text-3xl font-black text-slate-900 tracking-tight">Serviços e Profissionais Locais</h1>
-    <p class="text-sm text-slate-500 mt-1">Especialistas prontos para atender você em Teixeira de Freitas e região</p>
-  </div>
+<% content_for :title, "Serviços em Teixeira de Freitas | Accio Preço" %>
+<% content_for :meta_description, "Encontre prestadores de serviços, eletricistas, técnicos e oficinas em Teixeira de Freitas - BA. Orçamento rápido pelo WhatsApp." %>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    <% @services.each do |service| %>
-      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs hover:shadow-md transition flex flex-col justify-between">
-        <div>
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700">
-              <%= service.category.name %>
-            </span>
-            <% if service.home_service? %>
-              <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                🏠 A Domicílio
-              </span>
-            <% end %>
-          </div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Serviços e Especialistas</h1>
+      <p class="text-xs sm:text-sm text-slate-500 mt-1">Encontre profissionais para consertos, manutenção, instalações e cuidados em Teixeira de Freitas</p>
+    </div>
 
-          <h3 class="font-bold text-slate-900 text-lg mb-1">
-            <%= link_to service.name, service_path(service), class: "hover:text-indigo-600 transition" %>
-          </h3>
-          <p class="text-xs text-slate-500 mb-3">
-            Prestador: <%= link_to service.business.name, business_path(service.business), class: "font-semibold text-slate-700 hover:underline" %>
-          </p>
-          <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed">
-            <%= service.description %>
-          </p>
-        </div>
-
-        <div class="pt-4 border-t border-slate-100 flex items-center justify-between mt-4">
-          <span class="text-sm font-bold text-indigo-700">
-            <%= service.formatted_price %>
-          </span>
-
-          <% if service.business.whatsapp.present? %>
-            <%= link_to service.business.whatsapp_url(text: "Olá! Vi #{service.name} no Accio Preço e gostaria de solicitar um orçamento."), target: "_blank", class: "px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs" do %>
-              Orçamento
-            <% end %>
-          <% else %>
-            <%= link_to "Detalhes", service_path(service), class: "text-xs font-bold text-indigo-600 hover:underline" %>
-          <% end %>
-        </div>
-      </div>
+    <%= link_to search_path(type: "servicos"), class: "inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 text-xs font-bold transition" do %>
+      <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <span>Pesquisar serviços</span>
     <% end %>
   </div>
+
+  <% if @categories.any? %>
+    <div class="mb-8 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <span class="text-xs font-bold text-slate-400 shrink-0 mr-1">Filtrar:</span>
+      <% @categories.each do |cat| %>
+        <%= link_to cat.name, category_path(cat, type: "servicos"), class: "px-3 py-1.5 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:border-indigo-400 hover:text-indigo-600 transition shrink-0" %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @services.any? %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @services.each do |service| %>
+        <%= render "shared/service_card", service: service %>
+      <% end %>
+    </div>
+    <%= render "shared/pagination", pagy: @pagy %>
+  <% else %>
+    <%= render "shared/empty_state", title: "Nenhum serviço cadastrado no momento", message: "Em breve novos profissionais locais estarão disponíveis." %>
+  <% end %>
 </div>

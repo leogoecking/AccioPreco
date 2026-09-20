@@ -1,0 +1,55 @@
+<div id="mobile_<%= dom_id(service) %>" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+  <div class="flex items-start gap-3">
+    <% if service.images.attached? %>
+      <%= image_tag service.images.first, class: "w-16 h-16 rounded-xl object-cover border border-slate-200 shrink-0 bg-slate-50" %>
+    <% else %>
+      <div class="w-16 h-16 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-xl shrink-0">
+        🛠️
+      </div>
+    <% end %>
+
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center justify-between gap-1">
+        <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-semibold truncate">
+          <%= service.category.name %>
+        </span>
+        <% if service.active? %>
+          <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+            Ativo
+          </span>
+        <% else %>
+          <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+            Inativo
+          </span>
+        <% end %>
+      </div>
+
+      <h3 class="font-bold text-slate-900 text-sm mt-1 leading-snug truncate"><%= service.name %></h3>
+
+      <div class="mt-1 flex items-center gap-2">
+        <span class="text-xs font-black text-slate-900"><%= service.formatted_price %></span>
+        <% if service.home_service? %>
+          <span class="text-[10px] text-emerald-700 font-medium">· 🏠 Domicílio</span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+    <%= button_to toggle_active_painel_service_path(service), method: :patch, class: "text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 transition cursor-pointer" do %>
+      <%= service.active? ? "Desativar" : "Ativar" %>
+    <% end %>
+
+    <div class="flex items-center gap-1">
+      <% if service.active? %>
+        <%= link_to service_path(service), target: "_blank", class: "p-2 text-slate-500 hover:text-indigo-600 rounded-lg", title: "Ver público" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+        <% end %>
+      <% end %>
+      <%= link_to "Editar", edit_painel_service_path(service), class: "text-xs font-bold text-indigo-600 hover:text-indigo-800 px-2 py-1" %>
+      <%= button_to "Excluir", painel_service_path(service), method: :delete, data: { turbo_confirm: "Tem certeza que deseja excluir '#{service.name}'?" }, class: "text-xs font-bold text-rose-600 hover:text-rose-800 px-2 py-1 cursor-pointer" %>
+    </div>
+  </div>
+</div>

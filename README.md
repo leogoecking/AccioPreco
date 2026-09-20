@@ -134,11 +134,13 @@ app/
 │   │   └── authentication.rb      # Autenticação nativa do Rails 8
 │   ├── painel/                    # Namespace da área restrita do comerciante
 │   │   ├── base_controller.rb     # Controlador base com autenticação obrigatória
-│   │   ├── dashboard_controller.rb# Métricas e contatos recentes
-│   │   ├── businesses_controller.rb# Gestão do perfil da empresa
-│   │   ├── products_controller.rb # CRUD de produtos do comerciante
-│   │   ├── services_controller.rb # CRUD de serviços do comerciante
-│   │   └── leads_controller.rb    # Histórico de leads/contatos recebidos
+│   │   ├── dashboard_controller.rb# Métricas, medidor de perfil e contatos recentes
+│   │   ├── businesses_controller.rb# Gestão do perfil, logo/banner e dados de contato
+│   │   ├── products_controller.rb # Catálogo, toggle de estoque, exclusão de fotos e Pagy
+│   │   ├── services_controller.rb # Gestão de serviços, toggle ativo/inativo e Pagy
+│   │   ├── leads_controller.rb    # Histórico de leads com filtros por aba e resposta WhatsApp
+│   │   └── accounts_controller.rb # Alteração de dados cadastrais e senha segura
+│   ├── search_controller.rb       # Busca global hiperlocal em Teixeira de Freitas
 │   ├── businesses_controller.rb   # Catálogo público de empresas
 │   ├── products_controller.rb     # Catálogo público de produtos
 │   ├── services_controller.rb     # Catálogo público de serviços

@@ -38,14 +38,49 @@ class ProductTest < ActiveSupport::TestCase
     assert_includes product.errors[:promotional_price], "deve ser menor que o preço normal"
   end
 
-  test "validates price presence and non-negativity" do
+  test "validates price presence and positivity" do
     product = @business.products.build(
       category: @category,
       name: "Teclado",
-      price: -10
+      price: 0
     )
 
     assert_not product.valid?
-    assert_includes product.errors[:price], "deve ser maior ou igual a 0"
+    assert_includes product.errors[:price], "deve ser maior que 0"
+
+    product.price = -10
+    assert_not product.valid?
+    assert_includes product.errors[:price], "deve ser maior que 0"
+  end
+
+  test "discount_percentage protects against zero division" do
+    product = @business.products.build(price: 0, promotional_price: 0)
+    assert_equal 0, product.discount_percentage
+  end
+
+  test "sanitizes Brazilian currency strings with comma correctly" do
+    product = @business.products.build(
+      category: @category,
+      name: "Produto Brasileiro",
+      price: "79,90",
+      promotional_price: "59,90"
+    )
+
+    assert_equal BigDecimal("79.90"), product.price
+    assert_equal BigDecimal("59.90"), product.promotional_price
+    assert product.valid?
+  end
+
+  test "search_by_text finds products by name and description unaccented" do
+    product = @business.products.create!(
+      category: @category,
+      name: "Cafeteira Elétrica",
+      description: "Prepara café expresso cremoso",
+      price: 250.00
+    )
+
+    assert_includes @business.products.search_by_text("eletrica"), product
+    assert_includes @business.products.search_by_text("expresso"), product
+    assert_empty @business.products.search_by_text("inexistente")
   end
 end

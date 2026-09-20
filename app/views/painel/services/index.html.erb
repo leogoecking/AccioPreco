@@ -1,17 +1,66 @@
 <div class="space-y-6">
+  <!-- Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
       <h1 class="text-2xl font-black text-slate-900">Serviços Oferecidos</h1>
-      <p class="text-xs text-slate-500 mt-0.5">Gerencie os serviços prestados aos clientes da região</p>
+      <p class="text-xs text-slate-500 mt-0.5">Gerencie os serviços prestados, valores estimados e modalidade de atendimento</p>
     </div>
 
-    <%= link_to new_painel_service_path, class: "inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm transition" do %>
+    <%= link_to new_painel_service_path, class: "inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm transition self-start sm:self-auto" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
       <span>+ Adicionar Serviço</span>
     <% end %>
   </div>
 
-  <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-    <% if @services.any? %>
+  <!-- Search & Filter Bar -->
+  <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+    <%= form_with url: painel_services_path, method: :get, local: true, class: "grid grid-cols-1 sm:grid-cols-12 gap-3" do %>
+      <!-- Search Input -->
+      <div class="sm:col-span-4 relative">
+        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+        <%= text_field_tag :q, params[:q], placeholder: "Buscar serviço por nome ou descrição...", class: "w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none" %>
+      </div>
+
+      <!-- Category Filter -->
+      <div class="sm:col-span-3">
+        <%= select_tag :category_id, options_from_collection_for_select(@categories, :id, :name, params[:category_id]), prompt: "Todas as categorias", class: "w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white text-slate-700" %>
+      </div>
+
+      <!-- Status Filter -->
+      <div class="sm:col-span-2">
+        <%= select_tag :status, options_for_select([["Todos os status", ""], ["Ativos", "active"], ["Inativos", "inactive"]], params[:status]), class: "w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white text-slate-700" %>
+      </div>
+
+      <!-- Home Service Filter -->
+      <div class="sm:col-span-2">
+        <%= select_tag :home_service, options_for_select([["Todos os locais", ""], ["A domicílio", "true"], ["No local", "false"]], params[:home_service]), class: "w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white text-slate-700" %>
+      </div>
+
+      <!-- Actions -->
+      <div class="sm:col-span-1 flex items-center gap-2">
+        <button type="submit" class="w-full px-3 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition">
+          Filtrar
+        </button>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @services.any? %>
+    <!-- Mobile Card View (hidden on lg screens) -->
+    <div class="lg:hidden space-y-3">
+      <% @services.each do |service| %>
+        <%= render "painel/services/service_card", service: service %>
+      <% end %>
+    </div>
+
+    <!-- Desktop Table View (hidden on mobile) -->
+    <div class="hidden lg:block bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
@@ -26,55 +75,28 @@
           </thead>
           <tbody class="divide-y divide-slate-100 text-sm">
             <% @services.each do |service| %>
-              <tr class="hover:bg-slate-50/80 transition">
-                <td class="p-4">
-                  <p class="font-bold text-slate-900"><%= service.name %></p>
-                  <p class="text-xs text-slate-400">/servicos/<%= service.slug %></p>
-                </td>
-                <td class="p-4">
-                  <span class="text-xs px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-medium">
-                    <%= service.category.name %>
-                  </span>
-                </td>
-                <td class="p-4">
-                  <p class="font-bold text-indigo-700"><%= service.formatted_price %></p>
-                </td>
-                <td class="p-4">
-                  <% if service.home_service? %>
-                    <span class="text-xs text-emerald-700 font-semibold">🏠 A domicílio</span>
-                  <% else %>
-                    <span class="text-xs text-slate-500">No local</span>
-                  <% end %>
-                </td>
-                <td class="p-4">
-                  <% if service.active? %>
-                    <span class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
-                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Ativo
-                    </span>
-                  <% else %>
-                    <span class="inline-flex items-center gap-1 text-xs font-semibold text-slate-400">
-                      <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span> Inativo
-                    </span>
-                  <% end %>
-                </td>
-                <td class="p-4 text-right">
-                  <div class="inline-flex items-center gap-2">
-                    <%= link_to "Ver", service_path(service), target: "_blank", class: "text-xs font-semibold text-slate-600 hover:text-indigo-600" %>
-                    <%= link_to "Editar", edit_painel_service_path(service), class: "text-xs font-semibold text-indigo-600 hover:underline" %>
-                    <%= button_to "Excluir", painel_service_path(service), method: :delete, data: { turbo_confirm: "Tem certeza que deseja excluir este serviço?" }, class: "text-xs font-semibold text-rose-600 hover:underline cursor-pointer" %>
-                  </div>
-                </td>
-              </tr>
+              <%= render "painel/services/service_row", service: service %>
             <% end %>
           </tbody>
         </table>
       </div>
-    <% else %>
-      <div class="p-10 text-center">
-        <p class="text-sm font-semibold text-slate-700">Nenhum serviço cadastrado ainda.</p>
-        <p class="text-xs text-slate-400 mt-1 mb-4">Cadastre serviços para que clientes possam solicitar orçamentos.</p>
-        <%= link_to "Cadastrar Primeiro Serviço", new_painel_service_path, class: "px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold" %>
-      </div>
-    <% end %>
-  </div>
+    </div>
+
+    <!-- Pagination -->
+    <%= render "shared/pagination", pagy: @pagy %>
+  <% else %>
+    <!-- Empty State -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-10 text-center shadow-xs">
+      <% if params[:q].present? || params[:category_id].present? || params[:status].present? || params[:home_service].present? %>
+        <p class="text-sm font-bold text-slate-800">Nenhum serviço encontrado com os filtros aplicados.</p>
+        <p class="text-xs text-slate-500 mt-1 mb-4">Tente buscar por outro termo ou limpe os filtros de pesquisa.</p>
+        <%= link_to "Limpar Filtros", painel_services_path, class: "inline-flex px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-200 transition" %>
+      <% else %>
+        <div class="text-3xl mb-2">🛠️</div>
+        <p class="text-sm font-bold text-slate-800">Nenhum serviço cadastrado ainda.</p>
+        <p class="text-xs text-slate-500 mt-1 mb-4 max-w-sm mx-auto">Cadastre os serviços que sua empresa realiza para receber pedidos de orçamento diretamente no WhatsApp.</p>
+        <%= link_to "Cadastrar Primeiro Serviço", new_painel_service_path, class: "inline-flex px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-xs hover:bg-indigo-700 transition" %>
+      <% end %>
+    </div>
+  <% end %>
 </div>

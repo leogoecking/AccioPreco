@@ -7,19 +7,25 @@
       </h1>
       <p class="text-sm text-slate-500 mt-0.5">
         <% if @current_business %>
-          Gerenciando o catálogo de <strong class="text-slate-800"><%= @current_business.name %></strong>
+          Gerenciando o catálogo de <strong class="text-slate-800"><%= @current_business.name %></strong> em Teixeira de Freitas - BA
         <% else %>
-          Configure sua empresa para começar a cadastrar produtos e serviços.
+          Configure sua empresa para começar a divulgar produtos e serviços.
         <% end %>
       </p>
     </div>
 
     <% if @current_business %>
       <div class="flex items-center gap-2">
-        <%= link_to new_painel_product_path, class: "inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm transition" do %>
+        <%= link_to new_painel_product_path, class: "inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm transition" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
           <span>+ Novo Produto</span>
         <% end %>
-        <%= link_to new_painel_service_path, class: "inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-sm transition" do %>
+        <%= link_to new_painel_service_path, class: "inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-sm transition" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
           <span>+ Novo Serviço</span>
         <% end %>
       </div>
@@ -27,104 +33,249 @@
   </div>
 
   <% if @current_business %>
-    <!-- Metrics Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+    <!-- Metric Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <!-- Products Card -->
+      <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-xs relative overflow-hidden group hover:border-indigo-300 transition">
         <div class="flex items-center justify-between">
-          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Produtos Ativos</p>
-          <span class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-sm">📦</span>
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Produtos</p>
+          <span class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-base">📦</span>
         </div>
-        <p class="text-3xl font-black text-slate-900 mt-2"><%= @products_count %></p>
-        <p class="text-xs text-slate-500 mt-1"><%= link_to "Gerenciar produtos →", painel_products_path, class: "text-indigo-600 hover:underline font-semibold" %></p>
+        <div class="mt-3 flex items-baseline gap-2">
+          <span class="text-3xl font-black text-slate-900"><%= @products_count %></span>
+          <span class="text-xs text-slate-500 font-medium">(<%= @available_products_count %> disponíveis)</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">
+          <%= link_to "Gerenciar produtos →", painel_products_path, class: "text-indigo-600 hover:underline font-bold" %>
+        </p>
       </div>
 
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+      <!-- Services Card -->
+      <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-xs relative overflow-hidden group hover:border-indigo-300 transition">
         <div class="flex items-center justify-between">
-          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Serviços Ativos</p>
-          <span class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">🛠️</span>
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Serviços</p>
+          <span class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-base">🛠️</span>
         </div>
-        <p class="text-3xl font-black text-slate-900 mt-2"><%= @services_count %></p>
-        <p class="text-xs text-slate-500 mt-1"><%= link_to "Gerenciar serviços →", painel_services_path, class: "text-indigo-600 hover:underline font-semibold" %></p>
+        <div class="mt-3 flex items-baseline gap-2">
+          <span class="text-3xl font-black text-slate-900"><%= @services_count %></span>
+          <span class="text-xs text-slate-500 font-medium">(<%= @active_services_count %> ativos)</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">
+          <%= link_to "Gerenciar serviços →", painel_services_path, class: "text-indigo-600 hover:underline font-bold" %>
+        </p>
       </div>
 
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+      <!-- Leads Card -->
+      <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-xs relative overflow-hidden group hover:border-indigo-300 transition">
         <div class="flex items-center justify-between">
-          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Contatos / Leads</p>
-          <span class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">💬</span>
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Contatos Recebidos</p>
+          <span class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-base">💬</span>
         </div>
-        <p class="text-3xl font-black text-slate-900 mt-2"><%= @leads_count %></p>
-        <p class="text-xs text-slate-500 mt-1"><%= link_to "Ver todos os leads →", painel_leads_path, class: "text-indigo-600 hover:underline font-semibold" %></p>
+        <div class="mt-3 flex items-baseline gap-2">
+          <span class="text-3xl font-black text-slate-900"><%= @leads_count %></span>
+          <span class="text-xs text-slate-500 font-medium">(<%= @whatsapp_leads_count %> WhatsApp · <%= @quote_leads_count %> orçamentos)</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">
+          <%= link_to "Ver todos os leads →", painel_leads_path, class: "text-indigo-600 hover:underline font-bold" %>
+        </p>
       </div>
     </div>
 
-    <!-- Recent Leads & Products Tables -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <!-- Recent Leads -->
-      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-bold text-slate-900">Últimos Contatos Recebidos</h2>
-          <%= link_to "Ver todos", painel_leads_path, class: "text-xs font-bold text-indigo-600 hover:underline" %>
+    <!-- Onboarding Guide Banner (if products or services == 0) -->
+    <% if @products_count == 0 && @services_count == 0 %>
+      <div class="bg-gradient-to-r from-indigo-50 via-white to-indigo-50/50 rounded-2xl border border-indigo-100 p-6 shadow-xs">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-100 px-2.5 py-0.5 rounded-full">
+              🚀 Comece Aqui
+            </span>
+            <h2 class="text-lg font-black text-slate-900">Seu catálogo ainda está vazio</h2>
+            <p class="text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed">
+              Para que os clientes de Teixeira de Freitas encontrem sua empresa na busca, adicione seu primeiro produto ou serviço agora mesmo. É rápido e leva menos de 2 minutos.
+            </p>
+          </div>
+          <div class="flex items-center gap-3 shrink-0">
+            <%= link_to "Cadastrar Produto", new_painel_product_path, class: "px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition" %>
+            <%= link_to "Cadastrar Serviço", new_painel_service_path, class: "px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Quality & Profile Completion Meter -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-base font-black text-slate-900">Qualidade do Perfil Comercial</h2>
+            <span class="text-xs font-black px-2.5 py-0.5 rounded-full <%= @profile_completion[:percentage] >= 80 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' %>">
+              <%= @profile_completion[:percentage] %>% concluído
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Perfis completos recebem até 3x mais contatos no WhatsApp pelos clientes da região.
+          </p>
         </div>
 
-        <% if @recent_leads.any? %>
-          <div class="divide-y divide-slate-100">
-            <% @recent_leads.each do |lead| %>
-              <div class="py-3 flex items-center justify-between">
-                <div>
-                  <div class="flex items-center gap-2">
-                    <span class="inline-block w-2 h-2 rounded-full <%= lead.lead_type == 'whatsapp_click' ? 'bg-emerald-500' : 'bg-indigo-500' %>"></span>
-                    <p class="text-sm font-semibold text-slate-800">
-                      <%= lead.lead_type == 'whatsapp_click' ? 'Clique no WhatsApp' : 'Solicitação de Orçamento' %>
-                    </p>
-                  </div>
-                  <p class="text-xs text-slate-500 mt-0.5">Item: <%= lead.target_item_name %></p>
-                </div>
-                <span class="text-[11px] text-slate-400">
-                  <%= lead.created_at.strftime("%d/%m/%Y %H:%M") %>
-                </span>
-              </div>
-            <% end %>
+        <div>
+          <%= link_to "Editar Informações da Empresa →", edit_painel_business_path, class: "text-xs font-bold text-indigo-600 hover:underline" %>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+        <div class="h-2.5 rounded-full transition-all duration-500 <%= @profile_completion[:percentage] >= 80 ? 'bg-emerald-500' : 'bg-indigo-600' %>" style="width: <%= @profile_completion[:percentage] %>%;"></div>
+      </div>
+
+      <!-- Checklist items -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
+        <% @profile_completion[:steps].each do |step| %>
+          <div class="p-3 rounded-xl border <%= step[:completed] ? 'bg-slate-50/60 border-slate-200/80 text-slate-700' : 'bg-amber-50/60 border-amber-200 text-amber-900' %> flex items-start gap-2.5">
+            <span class="shrink-0 mt-0.5">
+              <% if step[:completed] %>
+                <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+              <% else %>
+                <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                </svg>
+              <% end %>
+            </span>
+            <div class="text-xs">
+              <p class="font-bold <%= step[:completed] ? 'text-slate-800' : 'text-amber-900' %>"><%= step[:label] %></p>
+              <p class="text-[11px] <%= step[:completed] ? 'text-slate-500' : 'text-amber-700' %> mt-0.5"><%= step[:description] %></p>
+            </div>
           </div>
-        <% else %>
-          <p class="text-xs text-slate-400 py-6 text-center">Nenhum contato registrado ainda.</p>
         <% end %>
+      </div>
+    </div>
+
+    <!-- Recent Leads & Products Overview -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Recent Leads -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-black text-slate-900">Últimos Contatos de Clientes</h2>
+            <%= link_to "Ver todos (#{ @leads_count })", painel_leads_path, class: "text-xs font-bold text-indigo-600 hover:underline" %>
+          </div>
+
+          <% if @recent_leads.any? %>
+            <div class="divide-y divide-slate-100">
+              <% @recent_leads.each do |lead| %>
+                <div class="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                      <span class="inline-block w-2 h-2 rounded-full <%= lead.lead_type == 'whatsapp_click' ? 'bg-emerald-500' : 'bg-indigo-500' %>"></span>
+                      <p class="text-xs font-bold text-slate-900">
+                        <%= lead.lead_type == 'whatsapp_click' ? 'Clique no WhatsApp' : 'Orçamento Solicitado' %>
+                      </p>
+                      <span class="text-[11px] text-slate-400">· <%= lead.created_at.strftime("%d/%m %H:%M") %></span>
+                    </div>
+
+                    <p class="text-xs text-slate-600">
+                      Interesse em: <strong class="text-slate-800"><%= lead.target_item_name %></strong>
+                    </p>
+
+                    <% if lead.name.present? || lead.phone.present? %>
+                      <p class="text-xs text-slate-500">
+                        Cliente: <strong class="text-slate-700"><%= lead.name.presence || "Não informado" %></strong>
+                        <% if lead.phone.present? %>
+                          · <span class="font-mono"><%= lead.phone %></span>
+                        <% end %>
+                      </p>
+                    <% end %>
+
+                    <% if lead.message.present? %>
+                      <p class="text-xs text-slate-600 italic bg-slate-50 p-2 rounded-lg border border-slate-100 line-clamp-2">
+                        "<%= lead.message %>"
+                      </p>
+                    <% end %>
+                  </div>
+
+                  <div class="shrink-0 flex sm:flex-col items-end gap-2">
+                    <% if lead.phone.present? && lead.customer_whatsapp_url.present? %>
+                      <%= link_to lead.customer_whatsapp_url, target: "_blank", rel: "noopener", class: "inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] transition shadow-2xs" do %>
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+                        </svg>
+                        Responder
+                      <% end %>
+                    <% end %>
+                    <%= link_to "Ver lead", painel_lead_path(lead), class: "text-[11px] font-bold text-slate-500 hover:text-indigo-600" %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="py-10 text-center">
+              <p class="text-sm font-semibold text-slate-700">Nenhum contato registrado ainda.</p>
+              <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Assim que os clientes clicarem no WhatsApp dos seus produtos ou enviarem pedidos de orçamento, eles aparecerão aqui.</p>
+            </div>
+          <% end %>
+        </div>
       </div>
 
       <!-- Quick Summary: Recent Products -->
-      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-bold text-slate-900">Produtos Recentes</h2>
-          <%= link_to "Ver todos", painel_products_path, class: "text-xs font-bold text-indigo-600 hover:underline" %>
-        </div>
-
-        <% if @recent_products.any? %>
-          <div class="divide-y divide-slate-100">
-            <% @recent_products.each do |product| %>
-              <div class="py-3 flex items-center justify-between">
-                <div>
-                  <p class="text-sm font-semibold text-slate-800"><%= product.name %></p>
-                  <p class="text-xs text-slate-500">R$ <%= '%.2f' % product.current_price %></p>
-                </div>
-                <div class="flex items-center gap-2">
-                  <%= link_to "Editar", edit_painel_product_path(product), class: "text-xs font-semibold text-indigo-600 hover:underline" %>
-                </div>
-              </div>
-            <% end %>
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-black text-slate-900">Seus Produtos Recentes</h2>
+            <%= link_to "Ver todos (#{ @products_count })", painel_products_path, class: "text-xs font-bold text-indigo-600 hover:underline" %>
           </div>
-        <% else %>
-          <p class="text-xs text-slate-400 py-6 text-center">Nenhum produto cadastrado.</p>
-        <% end %>
+
+          <% if @recent_products.any? %>
+            <div class="divide-y divide-slate-100">
+              <% @recent_products.each do |product| %>
+                <div class="py-3 flex items-center justify-between gap-4">
+                  <div class="flex items-center gap-3">
+                    <% if product.images.attached? %>
+                      <%= image_tag product.images.first, class: "w-10 h-10 rounded-lg object-cover border border-slate-200 shrink-0" %>
+                    <% else %>
+                      <div class="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 text-xs shrink-0">
+                        📦
+                      </div>
+                    <% end %>
+                    <div>
+                      <p class="text-xs font-bold text-slate-800"><%= product.name %></p>
+                      <p class="text-[11px] text-slate-500">
+                        <%= format_currency(product.current_price) %>
+                        <% if product.on_sale? %>
+                          <span class="text-rose-600 font-bold ml-1">Promoção</span>
+                        <% end %>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-2 shrink-0">
+                    <span class="text-[11px] font-bold px-2 py-0.5 rounded-md <%= product.available? ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500' %>">
+                      <%= product.available? ? 'Disponível' : 'Indisponível' %>
+                    </span>
+                    <%= link_to "Editar", edit_painel_product_path(product), class: "text-xs font-bold text-indigo-600 hover:underline" %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="py-10 text-center">
+              <p class="text-sm font-semibold text-slate-700">Nenhum produto cadastrado.</p>
+              <p class="text-xs text-slate-400 mt-1 mb-4">Adicione itens para que apareçam na busca de Teixeira de Freitas.</p>
+              <%= link_to "Cadastrar Primeiro Produto", new_painel_product_path, class: "px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-xs hover:bg-indigo-700 transition" %>
+            </div>
+          <% end %>
+        </div>
       </div>
     </div>
   <% else %>
     <!-- Empty state for merchant without business -->
-    <div class="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 text-center max-w-xl mx-auto">
+    <div class="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 text-center max-w-xl mx-auto shadow-sm">
       <div class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-3xl mx-auto mb-4">
         🏢
       </div>
       <h2 class="text-2xl font-black text-slate-900">Cadastre sua Empresa</h2>
-      <p class="text-sm text-slate-500 mt-2 mb-6">
-        Para começar a divulgar seus produtos e serviços no Accio Preço, adicione os dados básicos do seu negócio.
+      <p class="text-sm text-slate-500 mt-2 mb-6 leading-relaxed">
+        Para começar a divulgar seus produtos e serviços no Accio Preço e receber contatos no WhatsApp, cadastre as informações básicas do seu negócio.
       </p>
       <%= link_to "Cadastrar Empresa Agora", new_painel_business_path, class: "inline-flex px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md transition" %>
     </div>

@@ -1,0 +1,85 @@
+<div class="max-w-2xl space-y-8">
+  <!-- Header -->
+  <div>
+    <h1 class="text-2xl font-black text-slate-900">Minha Conta</h1>
+    <p class="text-xs text-slate-500 mt-0.5">Gerencie seus dados de acesso e segurança da conta no Accio Preço</p>
+  </div>
+
+  <!-- Profile Details Card -->
+  <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
+    <div class="border-b border-slate-100 pb-3">
+      <h2 class="text-base font-black text-slate-900">Dados do Usuário</h2>
+      <p class="text-xs text-slate-500">Informações de login e contato com a administração da plataforma</p>
+    </div>
+
+    <%= form_with model: @user, url: painel_account_path, method: :patch, local: true, class: "space-y-4" do |f| %>
+      <% if @user.errors.any? && !@user.errors[:current_password].any? && !@user.errors[:password].any? %>
+        <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs">
+          <ul class="list-disc list-inside space-y-1">
+            <% @user.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :name, "Nome Completo *", class: "block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1" %>
+        <%= f.text_field :name, required: true, class: "w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" %>
+      </div>
+
+      <div>
+        <%= f.label :email_address, "E-mail de Acesso *", class: "block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1" %>
+        <%= f.email_field :email_address, required: true, class: "w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" %>
+      </div>
+
+      <div class="flex items-center justify-between pt-2">
+        <span class="text-xs text-slate-400">
+          Conta criada em: <%= @user.created_at.strftime("%d/%m/%Y") %>
+        </span>
+        <%= f.submit "Salvar Dados Pessoais", data: { turbo_submits_with: "Salvando..." }, class: "px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-xs transition cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Change Password Card -->
+  <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
+    <div class="border-b border-slate-100 pb-3">
+      <h2 class="text-base font-black text-slate-900">Segurança & Senha</h2>
+      <p class="text-xs text-slate-500">Altere sua senha de acesso periodicamente para manter sua conta protegida</p>
+    </div>
+
+    <%= form_with model: @user, url: painel_account_path, method: :patch, local: true, class: "space-y-4" do |f| %>
+      <% if @user.errors[:current_password].any? || @user.errors[:password].any? || @user.errors[:password_confirmation].any? %>
+        <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs">
+          <ul class="list-disc list-inside space-y-1">
+            <% @user.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :current_password, "Senha Atual *", class: "block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1" %>
+        <%= f.password_field :current_password, required: true, autocomplete: "current-password", placeholder: "••••••••", class: "w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" %>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <%= f.label :password, "Nova Senha *", class: "block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1" %>
+          <%= f.password_field :password, required: true, autocomplete: "new-password", placeholder: "Mínimo 8 caracteres", class: "w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" %>
+        </div>
+
+        <div>
+          <%= f.label :password_confirmation, "Confirmar Nova Senha *", class: "block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1" %>
+          <%= f.password_field :password_confirmation, required: true, autocomplete: "new-password", placeholder: "Repita a nova senha", class: "w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" %>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end pt-2">
+        <%= f.submit "Alterar Senha", data: { turbo_submits_with: "Alterando senha..." }, class: "px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-xs transition cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

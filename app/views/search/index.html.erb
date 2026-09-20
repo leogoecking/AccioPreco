@@ -1,0 +1,213 @@
+<% content_for :title do %>
+  <%= @query.present? ? "#{@query} em Teixeira de Freitas | Busca Accio Preço" : "Busca de Produtos e Serviços em Teixeira de Freitas | Accio Preço" %>
+<% end %>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+  <!-- Search Bar Header -->
+  <div class="max-w-3xl mx-auto mb-8">
+    <%= render "shared/search_bar", compact: true, query: @query, category_slug: params[:category], type: @type, home_service: params[:home_service] %>
+  </div>
+
+  <!-- Filters & Breadcrumb Row -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+    <div>
+      <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+        <% if @query.present? %>
+          Resultados para <span class="text-indigo-600">"<%= @query %>"</span>
+        <% else %>
+          Explorar em Teixeira de Freitas
+        <% end %>
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+        <%= pluralize(@total_count, "resultado", "resultados") %> encontrados
+        <% if @category.present? %>
+          na categoria <span class="font-semibold text-slate-700"><%= @category.name %></span>
+        <% end %>
+      </p>
+    </div>
+
+    <!-- Filter Controls -->
+    <div class="flex flex-wrap items-center gap-2 text-xs">
+      <!-- Category Filter Dropdown -->
+      <%= form_with url: search_path, method: :get, class: "inline-flex items-center", data: { turbo_action: "advance" } do |f| %>
+        <%= f.hidden_field :q, value: @query if @query.present? %>
+        <%= f.hidden_field :type, value: @type if @type.present? && @type != "todos" %>
+        <%= f.hidden_field :home_service, value: params[:home_service] if params[:home_service].present? %>
+
+        <div class="relative">
+          <select name="category" onchange="this.form.requestSubmit()" class="text-xs font-semibold rounded-xl border border-slate-200 bg-white py-2 pl-3 pr-8 text-slate-700 shadow-2xs hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+            <option value="">Todas as Categorias</option>
+            <% @categories.each do |cat| %>
+              <option value="<%= cat.slug %>" <%= "selected" if @category&.id == cat.id %>>
+                <%= cat.name %>
+              </option>
+            <% end %>
+          </select>
+        </div>
+      <% end %>
+
+      <!-- Home service filter for services -->
+      <% if @type.in?(["servicos", "todos"]) %>
+        <%= link_to search_path(q: @query.presence, type: @type, category: params[:category].presence, home_service: params[:home_service] == "1" ? nil : "1"),
+          class: "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition #{params[:home_service] == '1' ? 'bg-indigo-50 border-indigo-300 text-indigo-700' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'}" do %>
+          <span>🏠</span>
+          <span>Apenas a Domicílio</span>
+          <% if params[:home_service] == "1" %>
+            <span class="text-indigo-400 font-bold ml-0.5">✕</span>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <!-- Clear filters button if category or home_service active -->
+      <% if @category.present? || params[:home_service].present? %>
+        <%= link_to "Limpar filtros", search_path(q: @query.presence, type: @type), class: "text-xs font-bold text-slate-500 hover:text-rose-600 px-2 py-2 transition" %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Result Type Tabs -->
+  <div class="flex items-center gap-2 overflow-x-auto py-4 border-b border-slate-200 scrollbar-none">
+    <%= link_to search_path(q: @query.presence, category: params[:category].presence, home_service: params[:home_service].presence, type: "todos"),
+      class: "inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition shrink-0 #{@type == 'todos' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" do %>
+      <span>Todos</span>
+      <span class="px-1.5 py-0.2 rounded-full text-[10px] #{@type == 'todos' ? 'bg-indigo-700 text-white' : 'bg-slate-200 text-slate-700'}">
+        <%= @total_count %>
+      </span>
+    <% end %>
+
+    <%= link_to search_path(q: @query.presence, category: params[:category].presence, home_service: params[:home_service].presence, type: "produtos"),
+      class: "inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition shrink-0 #{@type == 'produtos' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" do %>
+      <span>📦 Produtos</span>
+      <span class="px-1.5 py-0.2 rounded-full text-[10px] #{@type == 'produtos' ? 'bg-indigo-700 text-white' : 'bg-slate-200 text-slate-700'}">
+        <%= @products_count %>
+      </span>
+    <% end %>
+
+    <%= link_to search_path(q: @query.presence, category: params[:category].presence, home_service: params[:home_service].presence, type: "servicos"),
+      class: "inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition shrink-0 #{@type == 'servicos' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" do %>
+      <span>🛠️ Serviços</span>
+      <span class="px-1.5 py-0.2 rounded-full text-[10px] #{@type == 'servicos' ? 'bg-indigo-700 text-white' : 'bg-slate-200 text-slate-700'}">
+        <%= @services_count %>
+      </span>
+    <% end %>
+
+    <%= link_to search_path(q: @query.presence, category: params[:category].presence, type: "empresas"),
+      class: "inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition shrink-0 #{@type == 'empresas' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" do %>
+      <span>🏢 Empresas</span>
+      <span class="px-1.5 py-0.2 rounded-full text-[10px] #{@type == 'empresas' ? 'bg-indigo-700 text-white' : 'bg-slate-200 text-slate-700'}">
+        <%= @businesses_count %>
+      </span>
+    <% end %>
+  </div>
+
+  <!-- Content Section -->
+  <div class="py-8">
+    <% if @total_count.zero? %>
+      <%= render "shared/empty_state", query: @query %>
+    <% else %>
+
+      <%# TAB: TODOS %>
+      <% if @type == "todos" %>
+        <!-- Products Section -->
+        <% if @products_count > 0 %>
+          <div class="mb-12">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <span>📦 Produtos</span>
+                <span class="text-xs font-normal text-slate-500">(<%= @products_count %>)</span>
+              </h2>
+              <% if @products_count > @products.size %>
+                <%= link_to "Ver todos os #{@products_count} produtos →", search_path(q: @query.presence, category: params[:category].presence, type: "produtos"), class: "text-xs font-bold text-indigo-600 hover:underline" %>
+              <% end %>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <% @products.each do |product| %>
+                <%= render "shared/product_card", product: product %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Services Section -->
+        <% if @services_count > 0 %>
+          <div class="mb-12">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <span>🛠️ Serviços</span>
+                <span class="text-xs font-normal text-slate-500">(<%= @services_count %>)</span>
+              </h2>
+              <% if @services_count > @services.size %>
+                <%= link_to "Ver todos os #{@services_count} serviços →", search_path(q: @query.presence, category: params[:category].presence, home_service: params[:home_service].presence, type: "servicos"), class: "text-xs font-bold text-indigo-600 hover:underline" %>
+              <% end %>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <% @services.each do |service| %>
+                <%= render "shared/service_card", service: service %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Businesses Section -->
+        <% if @businesses_count > 0 %>
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <span>🏢 Empresas</span>
+                <span class="text-xs font-normal text-slate-500">(<%= @businesses_count %>)</span>
+              </h2>
+              <% if @businesses_count > @businesses.size %>
+                <%= link_to "Ver todas as #{@businesses_count} empresas →", search_path(q: @query.presence, category: params[:category].presence, type: "empresas"), class: "text-xs font-bold text-indigo-600 hover:underline" %>
+              <% end %>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <% @businesses.each do |business| %>
+                <%= render "shared/business_card", business: business %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+      <%# TAB: PRODUTOS %>
+      <% elsif @type == "produtos" %>
+        <% if @products.any? %>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <% @products.each do |product| %>
+              <%= render "shared/product_card", product: product %>
+            <% end %>
+          </div>
+          <%= render "shared/pagination", pagy: @pagy %>
+        <% else %>
+          <%= render "shared/empty_state", query: @query, title: "Nenhum produto encontrado", message: "Nenhum produto corresponde aos critérios pesquisados." %>
+        <% end %>
+
+      <%# TAB: SERVIÇOS %>
+      <% elsif @type == "servicos" %>
+        <% if @services.any? %>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <% @services.each do |service| %>
+              <%= render "shared/service_card", service: service %>
+            <% end %>
+          </div>
+          <%= render "shared/pagination", pagy: @pagy %>
+        <% else %>
+          <%= render "shared/empty_state", query: @query, title: "Nenhum serviço encontrado", message: "Nenhum serviço corresponde aos critérios pesquisados." %>
+        <% end %>
+
+      <%# TAB: EMPRESAS %>
+      <% elsif @type == "empresas" %>
+        <% if @businesses.any? %>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <% @businesses.each do |business| %>
+              <%= render "shared/business_card", business: business %>
+            <% end %>
+          </div>
+          <%= render "shared/pagination", pagy: @pagy %>
+        <% else %>
+          <%= render "shared/empty_state", query: @query, title: "Nenhuma empresa encontrada", message: "Nenhuma empresa corresponde aos critérios pesquisados." %>
+        <% end %>
+      <% end %>
+
+    <% end %>
+  </div>
+</div>

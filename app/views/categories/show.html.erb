@@ -1,0 +1,140 @@
+<% content_for :title, "#{@category.name} em Teixeira de Freitas | Accio Preço" %>
+<% content_for :meta_description, "Encontre produtos, serviços e empresas na categoria #{@category.name} em Teixeira de Freitas - BA." %>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+  <!-- Breadcrumb -->
+  <div class="mb-6 flex items-center gap-2 text-xs text-slate-500">
+    <%= link_to "Início", root_path, class: "hover:text-indigo-600 transition" %>
+    <span>/</span>
+    <span>Categorias</span>
+    <span>/</span>
+    <span class="font-bold text-slate-800"><%= @category.name %></span>
+  </div>
+
+  <!-- Category Header -->
+  <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 mb-8 shadow-xs">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Categoria</span>
+        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">
+          <%= @category.name %>
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-500 mt-1">
+          <%= pluralize(@products_count, "produto", "produtos") %> e <%= pluralize(@services_count, "serviço", "serviços") %> disponíveis em Teixeira de Freitas
+        </p>
+      </div>
+
+      <div>
+        <%= link_to search_path(category: @category.slug), class: "inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 text-xs font-bold transition" do %>
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <span>Buscar nesta categoria</span>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Category Nav Pills -->
+    <div class="mt-6 pt-6 border-t border-slate-100 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+      <span class="text-xs font-bold text-slate-400 shrink-0 mr-1">Outras:</span>
+      <% @categories.each do |cat| %>
+        <%= link_to cat.name, category_path(cat),
+          class: "px-3 py-1.5 rounded-full text-xs font-semibold shrink-0 transition #{cat.id == @category.id ? 'bg-indigo-600 text-white' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200'}" %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Type Tabs -->
+  <div class="flex items-center gap-2 py-4 border-b border-slate-200">
+    <%= link_to category_path(@category, type: "todos"),
+      class: "inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition #{@type == 'todos' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" do %>
+      <span>Todos</span>
+      <span class="px-1.5 py-0.2 rounded-full text-[10px] #{@type == 'todos' ? 'bg-indigo-700 text-white' : 'bg-slate-200 text-slate-700'}">
+        <%= @products_count + @services_count %>
+      </span>
+    <% end %>
+
+    <% if @products_count > 0 %>
+      <%= link_to category_path(@category, type: "produtos"),
+        class: "inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition #{@type == 'produtos' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" do %>
+        <span>📦 Produtos</span>
+        <span class="px-1.5 py-0.2 rounded-full text-[10px] #{@type == 'produtos' ? 'bg-indigo-700 text-white' : 'bg-slate-200 text-slate-700'}">
+          <%= @products_count %>
+        </span>
+      <% end %>
+    <% end %>
+
+    <% if @services_count > 0 %>
+      <%= link_to category_path(@category, type: "servicos"),
+        class: "inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition #{@type == 'servicos' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" do %>
+        <span>🛠️ Serviços</span>
+        <span class="px-1.5 py-0.2 rounded-full text-[10px] #{@type == 'servicos' ? 'bg-indigo-700 text-white' : 'bg-slate-200 text-slate-700'}">
+          <%= @services_count %>
+        </span>
+      <% end %>
+    <% end %>
+  </div>
+
+  <!-- Content Section -->
+  <div class="py-8">
+    <% if @products_count == 0 && @services_count == 0 %>
+      <%= render "shared/empty_state", title: "Nenhum item nesta categoria ainda", message: "Em breve novos produtos e serviços estarão cadastrados nesta categoria em Teixeira de Freitas." %>
+    <% else %>
+
+      <%# TAB: TODOS %>
+      <% if @type == "todos" %>
+        <% if @products_count > 0 %>
+          <div class="mb-12">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-lg font-bold text-slate-900">📦 Produtos</h2>
+              <% if @products_count > @products.size %>
+                <%= link_to "Ver todos (#{ @products_count }) →", category_path(@category, type: "produtos"), class: "text-xs font-bold text-indigo-600 hover:underline" %>
+              <% end %>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <% @products.each do |product| %>
+                <%= render "shared/product_card", product: product %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <% if @services_count > 0 %>
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-lg font-bold text-slate-900">🛠️ Serviços</h2>
+              <% if @services_count > @services.size %>
+                <%= link_to "Ver todos (#{ @services_count }) →", category_path(@category, type: "servicos"), class: "text-xs font-bold text-indigo-600 hover:underline" %>
+              <% end %>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <% @services.each do |service| %>
+                <%= render "shared/service_card", service: service %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+      <%# TAB: PRODUTOS %>
+      <% elsif @type == "produtos" %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <% @products.each do |product| %>
+            <%= render "shared/product_card", product: product %>
+          <% end %>
+        </div>
+        <%= render "shared/pagination", pagy: @pagy %>
+
+      <%# TAB: SERVIÇOS %>
+      <% elsif @type == "servicos" %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <% @services.each do |service| %>
+            <%= render "shared/service_card", service: service %>
+          <% end %>
+        </div>
+        <%= render "shared/pagination", pagy: @pagy %>
+
+      <% end %>
+
+    <% end %>
+  </div>
+</div>

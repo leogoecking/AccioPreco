@@ -1,0 +1,27 @@
+<%= turbo_stream.replace "quote_request_form_#{@lead.service_id || @lead.business_id}" do %>
+  <div class="p-6 bg-emerald-50 rounded-2xl border border-emerald-200 text-center animate-fade-in">
+    <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-3">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+    </div>
+    <h3 class="text-base font-bold text-emerald-900 mb-1">Solicitação enviada com sucesso!</h3>
+    <p class="text-xs text-emerald-700 leading-relaxed">
+      Recebemos sua mensagem, <strong><%= @lead.name %></strong>. O estabelecimento entrará em contato pelo WhatsApp informado em breve!
+    </p>
+  </div>
+<% end %>
+
+<%= turbo_stream.replace "quote_request_form_modal_#{@lead.service_id || @lead.business_id}" do %>
+  <div class="p-6 bg-emerald-50 rounded-2xl border border-emerald-200 text-center animate-fade-in">
+    <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-3">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+    </div>
+    <h3 class="text-base font-bold text-emerald-900 mb-1">Solicitação enviada com sucesso!</h3>
+    <p class="text-xs text-emerald-700 leading-relaxed">
+      Recebemos sua mensagem, <strong><%= @lead.name %></strong>. O estabelecimento entrará em contato pelo WhatsApp informado em breve!
+    </p>
+  </div>
+<% end %>

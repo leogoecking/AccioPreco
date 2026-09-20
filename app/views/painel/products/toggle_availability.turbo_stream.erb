@@ -1,0 +1,7 @@
+<%= turbo_stream.replace dom_id(@product) do %>
+  <%= render "painel/products/product_row", product: @product %>
+<% end %>
+
+<%= turbo_stream.replace "mobile_#{dom_id(@product)}" do %>
+  <%= render "painel/products/product_card", product: @product %>
+<% end %>

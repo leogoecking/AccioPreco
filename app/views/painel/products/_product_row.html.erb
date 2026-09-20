@@ -1,0 +1,65 @@
+<tr id="<%= dom_id(product) %>" class="hover:bg-slate-50/80 transition group">
+  <td class="p-4">
+    <div class="flex items-center gap-3">
+      <% if product.images.attached? %>
+        <%= image_tag product.images.first, class: "w-12 h-12 rounded-xl object-cover border border-slate-200 shrink-0 bg-slate-50" %>
+      <% else %>
+        <div class="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 text-sm shrink-0">
+          📦
+        </div>
+      <% end %>
+      <div>
+        <p class="font-bold text-slate-900 leading-tight"><%= product.name %></p>
+        <p class="text-[11px] text-slate-400 mt-0.5">/produtos/<%= product.slug %></p>
+      </div>
+    </div>
+  </td>
+  <td class="p-4">
+    <span class="text-xs px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 font-medium">
+      <%= product.category.name %>
+    </span>
+  </td>
+  <td class="p-4 whitespace-nowrap">
+    <p class="font-black text-slate-900"><%= format_currency(product.current_price) %></p>
+    <% if product.on_sale? %>
+      <div class="flex items-center gap-1 mt-0.5">
+        <span class="text-[11px] text-slate-400 line-through"><%= format_currency(product.price) %></span>
+        <span class="text-[10px] font-bold px-1.5 py-0.2 rounded bg-rose-50 text-rose-600">-<%= product.discount_percentage %>%</span>
+      </div>
+    <% end %>
+  </td>
+  <td class="p-4 whitespace-nowrap">
+    <div class="flex items-center gap-2">
+      <% if product.available? %>
+        <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Disponível
+        </span>
+      <% else %>
+        <span class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Indisponível
+        </span>
+      <% end %>
+
+      <%= button_to toggle_availability_painel_product_path(product), method: :patch, class: "text-[11px] font-bold text-slate-500 hover:text-indigo-600 bg-white hover:bg-slate-100 px-2 py-1 rounded-md border border-slate-200 transition cursor-pointer", title: product.available? ? "Marcar como indisponível" : "Marcar como disponível" do %>
+        <%= product.available? ? "Desativar" : "Ativar" %>
+      <% end %>
+    </div>
+  </td>
+  <td class="p-4 text-right whitespace-nowrap">
+    <div class="inline-flex items-center gap-2">
+      <% if product.available? %>
+        <%= link_to product_path(product), target: "_blank", class: "p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition", title: "Ver no site público" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+        <% end %>
+      <% end %>
+      <%= link_to edit_painel_product_path(product), class: "px-2.5 py-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg transition" do %>
+        Editar
+      <% end %>
+      <%= button_to painel_product_path(product), method: :delete, data: { turbo_confirm: "Tem certeza que deseja excluir o produto '#{product.name}'?" }, class: "px-2.5 py-1.5 text-xs font-bold text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-lg transition cursor-pointer" do %>
+        Excluir
+      <% end %>
+    </div>
+  </td>
+</tr>

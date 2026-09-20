@@ -1,0 +1,64 @@
+<%# Reusable Search Bar Partial
+  Locals:
+    compact: boolean (default: false)
+    placeholder: string (default: "O que você procura em Teixeira de Freitas?")
+    query: string (default: params[:q])
+    category_slug: string (default: params[:category])
+    type: string (default: params[:type])
+    home_service: string (default: params[:home_service])
+    show_suggestions: boolean (default: false)
+%>
+<% compact = local_assigns.fetch(:compact, false) %>
+<% placeholder = local_assigns.fetch(:placeholder, "O que você está procurando? (ex: copo térmico, ar-condicionado, eletricista)") %>
+<% query = local_assigns.fetch(:query, params[:q].to_s) %>
+<% category_slug = local_assigns.fetch(:category_slug, params[:category]) %>
+<% type = local_assigns.fetch(:type, params[:type]) %>
+<% home_service = local_assigns.fetch(:home_service, params[:home_service]) %>
+<% show_suggestions = local_assigns.fetch(:show_suggestions, false) %>
+
+<div class="w-full">
+  <%= form_with url: search_path, method: :get, class: "relative flex flex-col sm:flex-row items-stretch gap-2 bg-white #{compact ? 'p-1.5 rounded-xl' : 'p-2 rounded-2xl'} shadow-lg shadow-slate-200/50 border border-slate-200" do |f| %>
+    <%# Preserve current filter state if present %>
+    <% if type.present? && type != "todos" %>
+      <%= f.hidden_field :type, value: type %>
+    <% end %>
+    <% if category_slug.present? %>
+      <%= f.hidden_field :category, value: category_slug %>
+    <% end %>
+    <% if home_service.present? %>
+      <%= f.hidden_field :home_service, value: home_service %>
+    <% end %>
+
+    <div class="relative flex-grow flex items-center">
+      <svg class="w-5 h-5 text-slate-400 absolute left-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+
+      <%= f.text_field :q,
+        value: query,
+        placeholder: placeholder,
+        class: "w-full pl-11 pr-8 #{compact ? 'py-2.5 text-sm' : 'py-3 sm:py-3.5 text-sm sm:text-base'} text-slate-800 placeholder-slate-400 border-0 focus:ring-0 focus:outline-none rounded-xl" %>
+
+      <% if query.present? %>
+        <%= link_to search_path(type: type.presence, category: category_slug.presence), class: "absolute right-3 text-slate-400 hover:text-slate-600 p-1 transition", title: "Limpar busca" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        <% end %>
+      <% end %>
+    </div>
+
+    <%= f.submit "Buscar", class: "w-full sm:w-auto #{compact ? 'px-5 py-2.5 text-sm' : 'px-6 py-3.5 text-sm sm:text-base'} bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-sm shadow-indigo-200 cursor-pointer text-center" %>
+  <% end %>
+
+  <% if show_suggestions %>
+    <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-500">
+      <span class="font-medium text-slate-400">Sugestões:</span>
+      <%= link_to "copo térmico", search_path(q: "copo térmico"), class: "px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 transition shadow-2xs" %>
+      <%= link_to "carregador USB-C", search_path(q: "carregador USB-C"), class: "px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 transition shadow-2xs" %>
+      <%= link_to "ar-condicionado", search_path(q: "ar-condicionado"), class: "px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 transition shadow-2xs" %>
+      <%= link_to "eletricista", search_path(q: "eletricista"), class: "px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 transition shadow-2xs" %>
+      <%= link_to "ração", search_path(q: "ração"), class: "px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 transition shadow-2xs" %>
+    </div>
+  <% end %>
+</div>

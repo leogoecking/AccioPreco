@@ -1,0 +1,67 @@
+<%# Business Card Component
+  Locals:
+    business: Business instance
+%>
+<div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:shadow-md hover:border-indigo-300 transition duration-200 flex flex-col justify-between group">
+  <div>
+    <!-- Header with Avatar & Verified Badge -->
+    <div class="flex items-start justify-between gap-3 mb-3">
+      <% if business.logo.attached? %>
+        <%= image_tag business.logo, class: "w-12 h-12 rounded-xl object-cover border border-slate-200 bg-white shrink-0 shadow-2xs", alt: "Logo de #{business.name}" %>
+      <% else %>
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200/80 text-indigo-700 flex items-center justify-center font-black text-sm shrink-0 shadow-2xs group-hover:bg-indigo-600 group-hover:text-white transition duration-200">
+          <%= business.name[0..1].upcase %>
+        </div>
+      <% end %>
+
+      <% if business.verified? %>
+        <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+          <svg class="w-3 h-3 text-emerald-600 fill-current" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          Verificado
+        </span>
+      <% end %>
+    </div>
+
+    <!-- Name & Type -->
+    <h3 class="font-bold text-slate-900 text-base leading-snug group-hover:text-indigo-600 transition truncate">
+      <%= link_to business.name, business_path(business) %>
+    </h3>
+
+    <div class="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
+      <span class="font-medium text-slate-600">
+        <%= business.business_type == 'store' ? 'Loja de Produtos' : (business.business_type == 'service_provider' ? 'Prestador de Serviços' : 'Loja & Serviços') %>
+      </span>
+      <span class="text-slate-300">·</span>
+      <span><%= business.neighborhood.presence || business.city %></span>
+    </div>
+
+    <!-- Bio / Description -->
+    <p class="mt-3 text-xs text-slate-600 line-clamp-3 leading-relaxed">
+      <%= business.description %>
+    </p>
+  </div>
+
+  <!-- Bottom Details & CTA -->
+  <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
+    <%= link_to business_path(business), class: "text-xs font-bold text-slate-600 hover:text-indigo-600 transition flex items-center gap-1" do %>
+      <span>Ver perfil</span>
+      <span class="text-[10px] group-hover:translate-x-0.5 transition">→</span>
+    <% end %>
+
+    <% if business.whatsapp.present? %>
+      <%= link_to whatsapp_click_path(business_id: business.id),
+        target: "_blank",
+        rel: "noopener",
+        data: { turbo: false },
+        class: "inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition",
+        title: "Falar no WhatsApp" do %>
+        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+          <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.585 1.961.879 2.796.88h.005c3.181 0 5.767-2.586 5.768-5.766 0-3.18-2.586-5.767-5.773-5.767zm3.376 8.232c-.144.405-.837.775-1.17.824-.312.045-.718.067-2.146-.525-1.826-.757-3.003-2.617-3.094-2.738-.091-.122-.74-1.026-.74-1.956 0-.931.488-1.389.66-1.58.173-.191.376-.239.502-.239.126 0 .252.001.362.007.116.006.27-.044.422.324.156.377.534 1.306.58 1.401.047.095.078.207.016.332-.063.125-.094.203-.187.312-.093.11-.197.245-.281.33-.094.094-.192.197-.082.386.11.19.489.807 1.05 1.306.722.643 1.331.842 1.52.937.19.094.3.079.412-.047.112-.126.48-.56.608-.752.128-.192.257-.16.432-.095.176.064 1.117.527 1.31.624.192.096.321.144.368.224.047.079.047.46-.097.865z"/>
+        </svg>
+        <span>WhatsApp</span>
+      <% end %>
+    <% end %>
+  </div>
+</div>
